@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Lọc Laptop Chính Xác theo SKU</title>
+    <!-- Thêm thư viện SheetJS để đọc và ghi file Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 0 20px; background-color: #f8f9fa; }
+        .container { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px; }
+        .controls { margin: 30px 0; padding: 20px; border: 1px dashed #ced4da; border-radius: 5px; background-color: #f1f3f5; }
+        label { font-weight: bold; display: block; margin-bottom: 10px; color: #495057; font-size: 1.2em; }
+        input[type="file"] { display: block; margin: 15px auto; }
+        button { display: block; width: 100%; max-width: 400px; margin: 20px auto; padding: 12px 15px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; transition: background-color 0.2s; }
+        button:hover { background-color: #218838; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        #status { margin-top: 20px; font-weight: bold; }
+        .note { font-size: 0.9em; color: #6c757d; margin-top: 25px; padding: 15px; background-color: #e7f3ff; border-left: 4px solid #007bff; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Công cụ Lọc Laptop Chính Xác theo SKU</h1>
+
+        <div class="controls">
+            <label for="fileInput">1. Chọn tệp Excel chứa danh mục hàng hóa:</label>
+            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" onchange="fileSelected()">
+            
+            <button id="filterButton" onclick="handleFile()" disabled>Lọc và Tải về file Excel</button>
+
+            <div id="status"></div>
+        </div>
+        
+        <div class="note">
+            <strong>Hướng dẫn:</strong>
+            <ol>
+                <li>Nhấn "Chọn tệp" và tải lên file Excel của bạn.</li>
+                <li>Sau khi chọn tệp, nút "Lọc và Tải về" sẽ sáng lên.</li>
+                <li>Nhấn nút đó, trình duyệt sẽ tự động tạo và tải về một file Excel mới tên là <strong>`Danh_Sach_Laptop_Da_Loc.xlsx`</strong> chứa tất cả các dòng sản phẩm laptop đã được lọc.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // === DANH SÁCH CÁC MÃ SKU LAPTOP CẦN LỌC ===
+        const laptopSkuSet = new Set([
+            // HP (Hewlett-Packard)
+            'NBHP_BG1087AU_BZ7S1PA', 'NBHP_X360_7C0W5PA', 'NBHP_G4_A9VD6PT', 'NBHP_R0228TXI5_9Q979PA', 
+            'NBHP_R0296TX_AE0N3PA', 'NBHP_R1173TX_A2NS5PA', 'NBHP_R1176TX_A2NN0PA', 'NBHP_R1192TXI5_A2NP6PA', 
+            'NBHP_X360_634M0PA', 'NBHP_X360_6K773PA', 'NBHP_X360_6Z982PA', 'NBHP_X360_76B13PA', 
+            'NBHP_X360_76B14PA', 'NBHP_X360_76B17PA', 'NBHP_X360_76V59PA', 'NBHP_X360_7C0N9PA', 
+            'NBHP_0079TU_8D732PA', 'NBHP_0081TU_8D734PA', 'NBHP_0083TU_8D736PA', 'NBHP_0084TU_8D737PA', 
+            'NBHP_0110TU_8C5K9PA', 'NBHP_0215TX_9Q9B8PA', 'NBHP_0305TU_A2NL6PA', 'NBHP_035TX_8U6L7PA', 
+            'NBHP_0366TX_AY8X9PA', 'NBHP_0376TX_AY8Z2PA', 'NBHP_078AX_8C5N7PA', 'NBHP_089TX_8C5M6PA', 
+            'NBHP_092TU_8C5L3PA', 'NBHP_093TU_8C5L4PA', 'NBHP_094TU_8C5L5PA', 'NBHP_095TU_8C5L6PA', 
+            'NBHP_099TU_8C5M0PA', 'NBHP_1007TU_9Z2W1PA', 'NBHP_1011TU_9Z2W3PA', 'NBHP_1022AX_94F19PA', 
+            'NBHP_1037TU_9Z2W5PA', 'NBHP_1039TU_9Z2W7PA', 'NBHP_1040G9_6Z9A5PA', 'NBHP_1043TU_9Z2W9PA', 
+            'NBHP_1045TU_9Z2X1PA', 'NBHP_1058TU_9Z2X6PA', 'NBHP_1060TU_9Z2X8PA', 'NBHP_112TU_8C5L1PA', 
+            'NBHP_127TX_8C5N2PA', 'NBHP_129TX_8C5N4PA', 'NBHP_129TX_8W943PA', 'NBHP_X360_7C0P0PA', 
+            'NBHP_X360_80R24PA', 'NBHP_X360_80R25PA', 'NBHP_X360_80R26PA', 'NBHP_X360_80R27PA', 
+            'NBHP_X360_876C5PA', 'NBHP_X360_876D1PA', 'NBHP_X360_876D3PA', 'NBHP_X360_9Z2V4PA', 
+            'NBHP_X360_9Z2V5PA', 'NBHP_X360_A19BTPA', 'NBHP_X360_A19BZPA', 'NBHP_X360_A19C1PA', 
+            'NBHP_X360_A19C2PA', 'NBHP_X360_A19C4PA', 'NBHP_X360_A2NL3PA', 'NBHP_X360_AM9G7PT', 
+            'NBHP_X360_AY8V2PA', 'NBHP_X360_AY8W3PA', 'NBHP_X360_AY8W4PA', 'NBHP_X360_AY8W6PA', 
+            'NBHP_2056TU_6K786PA', 'NBHP_2063TX_7C0Q2PA', 'NBHP_2069TU_7C0P1PA', 'NBHP_2070TU_7C0V9PA', 
+            'NBHP_2071TU_7C0W0PA', 'NBHP_2072TU_7C0W1PA', 'NBHP_2073TU_7C0P2PA', 'NBHP_2075TU_7C0W2PA', 
+            'NBHP_2076TU_7C0P4PA', 'NBHP_2077TU_7C0W3PA', 'NBHP_228TU_8U240PA', 'NBHP_231TU_8U241PA', 
+            'NBHP_235TU_9Q970PA', 'NBHP_237TU_9Q972PA', 'NBHP_240G10_9H2D8PT', 'NBHP_240G10_9H2E0PT', 
+            'NBHP_240G10_9H2E3PT', 'NBHP_240G10_9H2E4PT', 'NBHP_240G10_9H2E5PT', 'NBHP_240G10_9H2E6PT', 
+            'NBHP_240G8_617K7PA', 'NBHP_240G9_6L1Y2PA', 'NBHP_240G9_6L1Y3PA', 'NBHP_240G9_6L1Y4PA', 
+            'NBHP_240G9_6M0X2PA', 'NBHP_240G9_6M0X3PA', 'NBHP_240G9_6M0X8PA', 'NBHP_240RG9_AX3C5AT', 
+            'NBHP_240RG9_B90Y6AT', 'NBHP_250G10_A06E9PT', 'NBHP_250G9_A06E6PT', 'NBHP_250G9_AG4X7AT', 
+            'NBHP_250RG9_AX3C8AT', 'NBHP_440G10_873A2PA', 'NBHP_440G10_873A8PA', 'NBHP_440G10_873A9PA', 
+            'NBHP_440G10_873B1PA', 'NBHP_440G10_873B2PA', 'NBHP_440G10_873B8PA', 'NBHP_440G10_873C1PA', 
+            'NBHP_440G10_9H8U1PT', 'NBHP_440G10_9H8U3PT', 'NBHP_440G10_9H8U4PT', 'NBHP_440G10_9H8U6PT', 
+            'NBHP_440G10_9H8U9PT', 'NBHP_440G10_9H8V2PT', 'NBHP_440G10_B73SHAT', 'NBHP_440G10_B73SKAT', 
+            'NBHP_440G10_B7TU1AT', 'NBHP_440G11_A74B4PT', 'NBHP_440G11_A74BBPT', 'NBHP_440G9_6M0Z8PA', 
+            'NBHP_445G10_9H8X7PT', 'NBHP_450G10_873A9PA', 'NBHP_450G10_873D1PA', 'NBHP_450G10_873J6PA', 
+            'NBHP_450G10_873L0PA', 'NBHP_450G10_9H8H2PT', 'NBHP_450G10_9H8V8PT', 'NBHP_450G10_9H8W0PT', 
+            'NBHP_450G9_6M0Y8PA', 'NBHP_450G9_6M0Z5PA', 'NBHP_460G11_A74MQPT', 'NBHP_460G11_A74MSPT', 
+            'NBHP_465G11_A8XG2PT', 'NBHP_4G1I_BQ5B3PT', 'NBHP_4G1I_BQ5B4PT', 'NBHP_630G10_873D5PA', 
+            'NBHP_630G10_9H1N9PT', 'NBHP_630G10_9J0B5PT', 'NBHP_630G11_A7LB8PT', 'NBHP_630G11_A7LC0PT', 
+            'NBHP_630G11_A7LC5PT', 'NBHP_630G11_A7LJ4PT', 'NBHP_630G11_A7LJ5PT', 'NBHP_630G11_A7LL8PT', 
+            'NBHP_630G11_A7LM7PT', 'NBHP_630G9_6M142PA', 'NBHP_630G9_6M145PA', 'NBHP_630G9_7K9H3PA', 
+            'NBHP_640G10_873G2PA', 'NBHP_640G10_873G3PA', 'NBHP_640G10_873G4PA', 'NBHP_640G10_873H2PA', 
+            'NBHP_640G10_873H3PA', 'NBHP_640G11_A7LB4PT', 'NBHP_640G11_A7LG9PT', 'NBHP_640G9_6M154PA', 
+            'NBHP_640G9_6M158PA', 'NBHP_830G9_6Z971PA', 'NBHP_830G9_6Z974PA', 'NBHP_840G10_875X2PA', 
+            'NBHP_840G10_875X3PA', 'NBHP_840G10_875X5PA', 'NBHP_840G10_876B9PA', 'NBHP_840G10_876C1PA', 
+            'NBHP_840G10_877M6PA', 'NBHP_840G10_8H951PA', 'NBHP_840G10_8H953PA', 'NBHP_840G10_A25BFPA', 
+            'NBHP_840G10_A25BGPA', 'NBHP_840G10_A27P0PA', 'NBHP_840G11_A7RA7PT', 'NBHP_840G11_A7RB6PT', 
+            'NBHP_840G11_A7QZ8PT', 'NBHP_840G11_A7RA0PT', 'NBHP_8G1I_BS8G8PT', 'NBHP_8G1I_BS8H1PT', 
+            'NBHP_8G1I_C1CE4PT', 'NBHP_FB0134TX_AY8V0PA', 'NBHP_FM0076TU_BZ7P6PA', 'NBHP_FR0033TU_C1MN2PA', 
+            'NBHP_G11_9C586AV_FF', 'NBHP_G1I_AL8B8A_FF', 'NBHP_G10_7C3M3AV_FF', 'NBHP_G11_8Y859AV_FF', 
+            'NBHP_X360_A19BWPA', 'NBHP_X360_A19BXPA', 'NBHP_X360_A19BYPA', 'NBHP_X360_AM9G7PT', 
+            'NBHP_640G11_901D5AV_DA', 'NBHP_640G11_901D9AV_DA', 'NBHP_640G9_4D0Y7AV_DA', 'NBHP_U7_8Z4M5AV_DA', 
+            'NBHP_840G9_4B849AV_DA',
+            // Dell
+            'NBDE_7430_I7_16GB_1TB', 'NBDE_7430_N7430I58W1', 'NBDE_7430_P172G001', 'NBDE_7340_42LT734001', 
+            'NBDE_7340_42LT734002', 'NBDE_7350_135U_16512W', 'NBDE_7350_135U16512U', 'NBDE_7350_16GB_512GB', 
+            'NBDE_7440_N4I5006W1', 'NBDE_DC15250_71071928', 'NBDE_DC15250_71073959', 'NBDE_DC15250_CPH99', 
+            'NBDE_DC15250_CPH997', 'NBDE_L5430I714U_512_1Y', 'NBDE_N3520_I5U085W11BLU_FP', 
+            'NBDE_N3530_I7U161W11BLU_FP', 'NBDE_N3530_I7U161W11SLU', 'NBDE_N5440_C5U165W11IBD2', 
+            'NBDE_N5440_I5U085W11IBU', 'NBDE_N5640_C7U161W11IBU', 'NBDE_N5640_I5U165W11IBU', 
+            'NBDE_V3520_I5U165W11GRU', 'NBDE_9340_71034922', 'NBDE_9340_71053703', 'NBDE_9340_HXRGT', 
+            'NBDE_9340_HXRGT2', 'NBDE_9340_XPSU5002W1', 'NBDE_9350_PP9H1', 'NBDE_9350_XPSU7016W1', 
+            'NBDE_5430_015633', 'NBDE_5430_019072', 'NBDE_5430_019073', 'NBDE_5430_20DY3', 
+            'NBDE_5430_20DY31', 'NBDE_5430_N4I5497W1', 'NBDE_5430_N5430I58W1', 'NBDE_5430_P171G001', 
+            'NBDE_5430_W11SL2050', 'NBDE_5440_021491', 'NBDE_5440_021492', 'NBDE_5440_027555', 
+            'NBDE_5440_034769', 'NBDE_5440_034770', 'NBDE_5440_1335U08512G', 'NBDE_5440_1335U16512G', 
+            'NBDE_5440_1335U16512GW', 'NBDE_5440_71053697', 'NBDE_5440_71059084', 'NBDE_5440_7FN5J', 
+            'NBDE_5440_I5_16GB_3Y', 'NBDE_5440_I5_2X8GB_3Y', 'NBDE_5440_I5_512GB_3Y', 'NBDE_5440_I7_16GB_1Y', 
+            'NBDE_5440_I7_512GB_1Y', 'NBDE_5440_N4I5211W1', 'NBDE_5440_N4I7204W1', 'NBDE_5440_NDY5V1', 
+            'NBDE_5441_5MNK1', 'NBDE_5441_71074238', 'NBDE_3420_L3420I3SSHD', 'NBDE_3420_L3420I5SSDF512B', 
+            'NBDE_3420_L3420I5SSDFB', 'NBDE_3420_L3420I5SSDFB_3Y', 'NBDE_3420_V4I7310W1', 'NBDE_3430_011900', 
+            'NBDE_3430_012103', 'NBDE_3430_015715', 'NBDE_3430_021669', 'NBDE_3430_024545', 
+            'NBDE_3430_026453', 'NBDE_3430_42LT343001', 'NBDE_3430_60YGM', 'NBDE_3430_71040387', 
+            'NBDE_3430_I58G256SSD', 'NBDE_3430_P152G008', 'NBDE_3430_V4I3001UB', 'NBDE_3430_V4I5611W1', 
+            'NBDE_3440_1235U08512G', 'NBDE_3440_1335U08512G', 'NBDE_3440_1335U16512G', 'NBDE_3440_1355U08512G', 
+            'NBDE_3440_71038100', 'NBDE_3440_71038101', 'NBDE_3440_71038102', 'NBDE_3440_I51335U16512GW', 
+            'NBDE_3440_I7_8512GW', 'NBDE_3440_I7_8GB_256GB', 'NBDE_3450_1335U_08512U', 'NBDE_3450_1335U_16512UHD', 
+            'NBDE_3450_1355U08512W', 'NBDE_3450_71058805', 'NBDE_3450_71076115', 'NBDE_3520_003262', 
+            'NBDE_3520_027003', 'NBDE_3520_030559', 'NBDE_3520_25P231', 'NBDE_3520_25P2311', 
+            'NBDE_3520_25P2312', 'NBDE_3520_5M2TT2', 'NBDE_3520_5M2TT3', 'NBDE_3520_71045026', 
+            'NBDE_3520_71053702', 'NBDE_3520_71058652', 'NBDE_3520_71069202', 'NBDE_3520_N5I5052W1', 
+            'NBDE_3520_N5I5057W1', 'NBDE_3520_N5I5122W1', 'NBDE_3520_N5I5201W1', 'NBDE_3520_N5I5352W1', 
+            'NBDE_3520_W11BLU', 'NBDE_3530_011775', 'NBDE_3530_014840', 'NBDE_3530_026454', 
+            'NBDE_3530_035574', 'NBDE_3530_71043885', 'NBDE_3530_71043887', 'NBDE_3530_71043888', 
+            'NBDE_3530_71053721', 'NBDE_3530_71053725', 'NBDE_3530_71070372', 'NBDE_3530_80GG9', 
+            'NBDE_3530_80GG91', 'NBDE_3530_80GG911', 'NBDE_3530_80GG92', 'NBDE_3530_80GG93', 
+            'NBDE_3530_I5_W11BLU', 'NBDE_3530_I5_W11SLU', 'NBDE_3530_N3530I716W1', 'NBDE_3530_N5I3005W1', 
+            'NBDE_3530_N5I5007W1', 'NBDE_3530_N5I5340W1', 'NBDE_3530_N5I5407W1', 'NBDE_3530_N5I5489W1', 
+            'NBDE_3530_N5I5530W1', 'NBDE_3530_N5I5791W1', 'NBDE_3530_N5I7240W1', 'NBDE_3530_N5I7301W1', 
+            'NBDE_3530_N5I7305W1', 'NBDE_3530_N5I7421W1', 'NBDE_3530_P16WD', 'NBDE_3530_P16WD1', 
+            'NBDE_3530_P16WD2', 'NBDE_3530_P16WD5', 'NBDE_3530_V5I3465W1', 'NBDE_3530_V5I5267W1', 
+            'NBDE_3530_W11BLU', 'NBDE_3530_W11GRD2', 'NBDE_3540_021487', 'NBDE_3540_021488', 
+            'NBDE_3540_021489', 'NBDE_3540_024262', 'NBDE_3540_42LT354001', 'NBDE_3540_71038100', 
+            'NBDE_3540_71038101', 'NBDE_3540_71038102', 'NBDE_3550_71047018', 'NBDE_5430_I7_8GB_3Y', 
+            'NBDE_5430_I5_8GB_1Y', 'NBDE_5430_I5_8GB_3Y', 'NBDE_5440_1355U08512G', 'NBDE_5450_1335U08512W', 
+            'NBDE_5450_1335U16512W', 'NBDE_7450_16GB_3Y_DA', 'NBDE_7450_16GB_512GB_DA', 'NBDE_7350_32GB_512GB_DA', 
+            'NBDE_7350_71064010_DA', 'NBDE_7440_I5_16GB_DA', 'NBDE_9540_71064009_DA', 'NBDE_5480_I7_RTX2000_DA', 
+            'NBDE_5490_32GB_1TB_DA', 'NBDE_5680_I7_RTX4000_DA', 'NBDE_5690_64GB_1TB_DA',
+            // Lenovo
+            'NBLE_E14_S3QU00', 'NBLE_E14_S59700_DA', 'NBLE_E15_00CFVA', 'NBLE_E15_00CMVA', 
+            'NBLE_E16_002GVA', 'NBLE_E16_002JVA', 'NBLE_E16_002KVA', 'NBLE_E16_004HVN', 
+            'NBLE_E16_004PVN', 'NBLE_E16_006AVA', 'NBLE_E16_006GVN', 'NBLE_E16_006UVN', 
+            'NBLE_E16_00GJVN', 'NBLE_E16_00GKVA', 'NBLE_GAMING3_00JUVN', 'NBLE_L13_005YVA', 
+            'NBLE_L14_003AVA', 'NBLE_L14_S2JQ00_DA', 'NBLE_L15_0023VA', 'NBLE_LEGION5_002VVN', 
+            'NBLE_LOQ_00AKVN', 'NBLE_P14S_003SVA', 'NBLE_P14S_0053VA', 'NBLE_P16S_003HVA', 
+            'NBLE_P16S_004VVA', 'NBLE_P16S_005UVA', 'NBLE_P16S_0064VN', 'NBLE_S14_000LVN', 
+            'NBLE_S14_0028VN', 'NBLE_S14_0029VN', 'NBLE_S14_002EVN', 'NBLE_S14_W002CVN', 
+            'NBLE_T14_0007VA', 'NBLE_T14_000JVN', 'NBLE_T14_000KVN', 'NBLE_T14_006KVN', 
+            'NBLE_T14_006LVN', 'NBLE_T14_006PVA', 'NBLE_T14_006QVA', 'NBLE_T14_006QVN', 
+            'NBLE_T14_006YVN', 'NBLE_T14_0074VA', 'NBLE_T14_0076VA', 'NBLE_T14_0077VA', 
+            'NBLE_T14_0079VA', 'NBLE_T14_007BVA', 'NBLE_T14_007DVA', 'NBLE_T14_007EVA', 
+            'NBLE_T14_007GVA', 'NBLE_T14_00JQVN', 'NBLE_L14_S35M00_DA', 'NBLE_L14_S35N00_DA', 
+            'NBLE_P1_S10M00_DA', 'NBLE_P1_S10N00_DA', 'NBLE_L15_S8L200_DA', 'NBLE_E14_S0X100_DA', 
+            'NBLE_E14_S0X200_DA', 'NBLE_E14_S2B300_DA', 'NBLE_T14_00L8FQ', 'NBLE_T14_00NXVA', 
+            'NBLE_T14_00NYVN', 'NBLE_T14_21QC0000VA', 'NBLE_T14_21QC0002VA', 'NBLE_T14_21QC0003VA', 
+            'NBLE_T14_21QC000BVN', 'NBLE_T14_21QC000CVN', 'NBLE_T14_21QCS0L700', 'NBLE_T14_SFF000', 
+            'NBLE_T14S_0082VA', 'NBLE_T14S_04D00', 'NBLE_T14S_21LSS0BV00', 'NBLE_T14S_21LSS0BW00', 
+            'NBLE_T14S_S01400', 'NBLE_T14S_S01500', 'NBLE_T14S_S0B100', 'NBLE_T14S_S0C200', 
+            'NBLE_T14S_S0WL00', 'NBLE_T14S_S0WM00', 'NBLE_T14S_S17A00', 'NBLE_T14S_S1H200', 
+            'NBLE_T14S_S86U00', 'NBLE_T16_003PVA', 'NBLE_T16_0075VA', 'NBLE_T16_007EVA', 
+            'NBLE_T16_007QVN', 'NBLE_V14_0000RVN', 'NBLE_V14_000FNVN', 'NBLE_V14_000GRVN', 
+            'NBLE_V14_00BGVN', 'NBLE_V14G3_0060VN', 'NBLE_V14G4_83A0000TVN', 'NBLE_V15_100URVN', 
+            'NBLE_V15G_0041VN', 'NBLE_V15G4_000BVN', 'NBLE_V15G4_100F3VN', 'NBLE_X1_000PVN', 
+            'NBLE_X1_008MVN', 'NBLE_X1_009PVN', 'NBLE_X1_21Q0003JVN', 'NBLE_X1_2B000', 
+            'NBLE_X1_S08K00', 'NBLE_X1_S0QX00', 'NBLE_X1_SEG000', 'NBLE_X13_006RVA', 
+            'NBLE_X13_21LUS09Y00', 'NBLE_X13_21LUS0A000', 'NBLE_X13_S01100', 'NBLE_X13_S01200', 
+            'NBLE_X13_S0EJ00', 'NBLE_X13_S0EK00', 'NBLE_14IRH10_1000GVN', 'NBLE_14IRH10_1002PVN', 
+            'NBLE_14IAH8_001XVN', 'NBLE_14IAH8_003WVN', 'NBLE_14IRH8_0023VN', 'NBLE_14IRL8_002VVN', 
+            'NBLE_14IRL8_007QVN', 'NBLE_14IRL8_008LVN', 'NBLE_15ARP9_003VVN', 'NBLE_15ARP9_007JVN', 
+            'NBLE_15IAX9_001QVN', 'NBLE_15IAX9_83GS000RVN', 'NBLE_15IRH8_003EVN', 'NBLE_15IRX10_004GVN', 
+            'NBLE_15IRX9_00UGVN', 'NBLE_15IRX9_012LVN', 'NBLE_15IRX9_017HVN', 'NBLE_15IRX9_01ALVN', 
+            'NBLE_16AHP9_003AVN', 'NBLE_16AHP9_83DH003BVN', 'NBLE_16G6_00Q1VN', 'NBLE_16G8_0070VN', 
+            'NBLE_16G8_0093VA', 'NBLE_E14_002TVA', 'NBLE_E14_004JVN', 'NBLE_E14_0069VA', 
+            'NBLE_E14_006HVA', 'NBLE_E14_006QVA', 'NBLE_E14_007XVN', 'NBLE_E14_00DPVA', 
+            'NBLE_E14_00DQVA', 'NBLE_E14_00FSVA', 'NBLE_E14_00H3VA', 'NBLE_E14_00PCVA', 
+            'NBLE_E14_00PDVA', 'NBLE_E14_00PFVA', 'NBLE_E14_0AA00', 'NBLE_E14_0AB00', 
+            'NBLE_E14_7004MVA', 'NBLE_E14_7004PVN', 'NBLE_E14_K00H4VA',
+            // Asus
+            'NBAS_P1403CVA_I5SE16_50W', 'NBAS_P1503CVA_I5SE16_63WS', 'NBAS_402CVA_NK0104W', 
+            'NBAS_A1505VA_MA492W', 'NBAS_B1400C_BV3186W', 'NBAS_B1400CBA_EB0641W', 'NBAS_B1402CB_NK1717W', 
+            'NBAS_B1402CBA_EK0454W', 'NBAS_B1402CBA_EK0559W', 'NBAS_B1402CBA_EK0648W', 'NBAS_B1402CBA_NK1560W', 
+            'NBAS_B1402CBA_NK1583W', 'NBAS_B1402CV_NK0062', 'NBAS_B1402CV_NK0246', 'NBAS_B1402CVA_NK0062W', 
+            'NBAS_B1402CVA_NK0157W', 'NBAS_B1402CVA_NK0176W', 'NBAS_B1402CVA_NK0177W', 'NBAS_B1402CVA_NK3350', 
+            'NBAS_B1500CBA_BQ0249W', 'NBAS_B1502CBA_NJ1261W', 'NBAS_B1502CV_NJ0149W', 'NBAS_B1502CVA_NJ0050W', 
+            'NBAS_B1502CVA_NJ0148W', 'NBAS_B1502CVA_NJ0175W', 'NBAS_B2402CVA_NK0398W', 'NBAS_B5302CEA_L50916W', 
+            'NBAS_B5302FEA_LF0749W', 'NBAS_B5402CVA_KI0123W', 'NBAS_B5402CVA_KI0229W', 'NBAS_B5404CM_Q70249W', 
+            'NBAS_B5404CM_Q70249WL', 'NBAS_B5404CMA_Q70250WL', 'NBAS_B5404CMA_Q70857X', 'NBAS_B9403CVAR_PP2076X', 
+            'NBAS_BM1403CDA_S60974W', 'NBAS_P1403CVA_I308_50W', 'NBAS_P1403CVA_I308256_63W', 'NBAS_P1403CVA_I508_50W', 
+            'NBAS_P1403CVA_I716_50W', 'NBAS_P1403CVA_I7SE16', 'NBAS_P1403CVA_S61256', 'NBAS_P1503CVA_I308256-50W', 
+            'NBAS_P1503CVA_I508_50W', 'NBAS_P1503CVA_I5SE16_50W', 'NBAS_P1503CVA_I716_50W', 
+            'NBAS_P1503CVA_I7SE16_63WS', 'NBAS_P5405CSA_NZ0017W', 'NBAS_P5405CSA_NZ0442WS', 'NBAS_P5405CSA_NZ0450WS', 
+            'NBAS_S5406SA_PP059WS', 'NBAS_UM3406KA_PP590WS', 'NBAS_UX3405CA_PZ187WS', 'NBAS_UX3405CA_PZ204WS', 
+            'NBAS_UX3405M_PP152W', 'NBAS_UX3405MA_PP151W', 'NBAS_UX5304VA_NQ125W', 'NBAS_UX5406SA_PV140WS', 
+            'NBAS_X1605VA_MB105W', 'NBASS_P1403CVA_S60618W', 'NBAS_FA506NCR_HN047W', 'NBAS_P3405CVA_NZ0027W', 
+            'NBAS_P3605CVA_PL0042W',
+            // MSI
+            'NBSI_Z16P_B12UGST', 'NBSI_14AI_056VN', 'NBSI_14AI_058VN', 'NBSI_14VEKG_856VN', 
+            'NBSI_15_1416VN', 'NBSI_15_B12UCX_1419VN', 'NBSI_3UC_2081VN', 'NBSI_A12UCX_281VN', 
+            'NBSI_A12VE_412VN', 'NBSI_B12MO_487VN', 'NBSI_B12MO_625VN', 'NBSI_B12MO_628VN', 
+            'NBSI_B13UC_1411VN', 'NBSI_B13UC_2044VN', 'NBSI_B13UCX_2080VN', 'NBSI_B13UDXK_2269VN', 
+            'NBSI_B13VEK_2256VN', 'NBSI_B13VEK_252VN', 'NBSI_B13VFK_676VN', 'NBSI_B7M_099VN', 
+            'NBSI_B7M_238VN', 'NBSI_D13MG_217VN', 'NBSI_D2XWFKG_035VN', 'NBSI_F13MG_082VN', 
+            'NBSI_F13MG_240VNCP', 'NBSI_GF63_460VN', 'NBSI_GF63_841VN', 'NBSI_GF63_887VN', 
+            'NBSI_GF66_804VN', 'NBSI_GF66_805VN', 'NBSI_GP68HX_252VN', 'NBSI_GP77_043VN', 
+            'NBSI_GP78HX_476VN', 'NBSI_A13UDX_099VN', 'NBSI_A13VE_090VN', 'NBSI_A13VFK_876VN', 
+            'NBSI_A13VG_289VN', 'NBSI_A14VFT_273VN', 'NBSI_A1MG_062VN', 'NBSI_A1VEK_053VN', 
+            'NBSI_A2VMG_040VN', 'NBSI_B14VEKG_039VN', 'NBSI_B14VEKG_459VN', 'NBSI_B14WFK_267VN',
+            // Apple (MacBook)
+            'NBAL_M4_MX2Y3SA', 'NBAL_M4_Z1DS0003L', 'NBAL_M4_Z1DS0003R', 'NBAL_M3_MC8N4SA', 
+            'NBAL_M3_MR7J3SA', 'NBAL_M3_MRW33SA', 'NBAL_M3_MRW73SA', 'NBAL_M3_MRX63SA', 
+            'NBAL_M3_MRXN3SA', 'NBAL_M3_MXCR3SA', 'NBAL_M3_MXCU3SA', 'NBAL_M3_MXCV3SA', 
+            'NBAL_M3_Z1C80005F', 'NBAL_M4_MC6T4SA', 'NBAL_M4_MC6U4SA', 'NBAL_M4_MW0W3SA', 
+            'NBAL_M4_MW0X3SA', 'NBAL_M4_MW0Y3SA', 'NBAL_M4_MW2W3SA', 'NBAL_M1_MGN63SA', 
+            'NBAL_M2_MLXW3SA', 'NBAL_M2_MNEP3SA', 'NBAL_M2_MNWD3SA', 'NBAL_M2_Z1600098B', 
+            'NBAL_M2_Z16T0003V', 'NBAL_M2_Z1750007N', 'NBAL_M2_Z1HL0014P', 'NBAL_M4_MW2X3SA', 
+            'NBAL_M4_MX2E3SA', 'NBAL_M4_MX2H3SA', 'NBAL_M4_MX2X3SA', 'NBAL_M4_Z1FE000CU_DA',
+            // Acer
+            'NBAC_A315_DSV00N', 'NBAC_A515_KHJSV008', 'NBAC_NX_KSGSV_002', 'NBAC_SFG14_KG3SV002', 'NBAC_SFG14_ZSV004',
+            // Microsoft
+            'TLMS_PRO8_00032', 'TLMS_PRO8_00017', 'TLMS_PRO8_00003', 'TLMS_GO3_8VD_00016',
+            // LG
+            'NBLG_14Z90R_GAH53A5', 'NBLG_14Z90R_GAH75A5', 'NBLG_14Z90RS_GAH54A5', 'NBLG_14Z90S_AH75A5', 
+            'NBLG_16Z90S_GAH76A5', 'NBLG_14Z90SG_AH55A5', 'NBLG_14Z90SG_AH75A5', 'NBLG_14ZD90R_GAX52A5', 'NBLG_16Z90RS_GAH54A5',
+            // Khác
+            'NOTEBOOK', 'NBNK_NS14QL_4GB_128GB_DA', 'NBFJ_E5412_I5_512GB_DA', 'NBFJ_E5413_I5_16GB_DA', 'NBFJ_E5413_I5_512GB_DA'
+        ]);
+
+        function fileSelected() {
+            const filterButton = document.getElementById('filterButton');
+            filterButton.disabled = false;
+        }
+
+        function handleFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = 'Đang xử lý...';
+
+            if (!file) {
+                statusDiv.textContent = 'Lỗi: Chưa chọn tệp!';
+                statusDiv.style.color = 'red';
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                try {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    const filteredData = filterDataBySKU(jsonData);
+                    
+                    if (filteredData.length > 0) {
+                        exportToExcel(filteredData);
+                        statusDiv.textContent = `Đã lọc và tải về ${filteredData.length} dòng sản phẩm laptop.`;
+                        statusDiv.style.color = 'green';
+                    } else {
+                        statusDiv.textContent = 'Không tìm thấy dòng nào khớp với danh sách SKU laptop.';
+                        statusDiv.style.color = 'orange';
+                    }
+                } catch (e) {
+                    statusDiv.textContent = `Đã xảy ra lỗi: ${e.message}`;
+                    statusDiv.style.color = 'red';
+                    console.error(e);
+                }
+            };
+            
+            reader.onerror = function() {
+                statusDiv.textContent = 'Không thể đọc tệp này.';
+                statusDiv.style.color = 'red';
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function filterDataBySKU(data) {
+            const skuColumnName = 'Mã hàng hóa';
+            // Lọc ra các dòng mà 'Mã hàng hóa' có trong danh sách SKU của bạn
+            return data.filter(row => row[skuColumnName] && laptopSkuSet.has(row[skuColumnName]));
+        }
+
+        function exportToExcel(data) {
+            const newWorksheet = XLSX.utils.json_to_sheet(data);
+            const newWorkbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Laptop Da Loc');
+            
+            // Xuất file
+            XLSX.writeFile(newWorkbook, 'Danh_Sach_Laptop_Da_Loc.xlsx');
+        }
+    </script>
+</body>
+</html>
