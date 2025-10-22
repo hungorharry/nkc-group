@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Pro Phân Tích (Excel Reader)</title>
+    <script
+      id="xlsx-lib"
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    ></script>
+    <script
+      id="chartjs-lib"
+      src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #50e3c2;
+        --success-color: #28a745;
+        --danger-color: #d0021b;
+        --warning-color: #f5a623;
+        --background-color: #f4f7fc;
+        --card-background: #ffffff;
+        --text-color: #4a4a4a;
+        --heading-color: #1c3d5a;
+        --border-color: #eaeaea;
+        --shadow-color: rgba(60, 64, 67, 0.15);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transition: margin-left 0.3s;
+      }
+
+      /* CSS CHO FILE EXPORT (SẼ ĐƯỢỢC TIÊM VÀO) */
+      /* Note: .section-note-box styling added */
+      /*
+        #export-sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--card-background); border-right: 1px solid var(--border-color); box-shadow: 4px 0 10px rgba(0,0,0,0.05); overflow-y: auto; z-index: 1010; padding: 20px; box-sizing: border-box; }
+        #export-sidebar h3 { margin-top: 0; color: var(--heading-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; font-size: 1.2em; }
+        #export-catalog-list { list-style: none; padding: 0; margin: 20px 0 0 0; }
+        #export-catalog-list li a { text-decoration: none; color: var(--primary-color); font-size: 0.9em; padding: 8px 10px; display: block; border-radius: 5px; margin-bottom: 5px; transition: all 0.2s; }
+        #export-catalog-list li a:hover { background-color: var(--background-color); color: var(--heading-color); }
+        #export-catalog-list li a.section-title { font-weight: 700; color: var(--heading-color); font-size: 1em; padding-left: 0; margin-top: 15px; }
+        #export-catalog-list li a.chart-title { padding-left: 20px; font-weight: 500; }
+        body.export-view { margin-left: 280px; padding: 20px 30px; }
+        .section-note-box {
+            border-top: 1px dashed var(--border-color); padding: 10px 15px; margin-top: 15px;
+            background-color: #f8f9fa; min-height: 20px;
+            font-size: 0.85em; color: #777;
+            line-height: 1.5; font-style: italic;
+            cursor: default;
+        }
+        .analysis-section > .section-note-box {
+             margin-top: 25px;
+             font-size: 0.9em; color: #555;
+        }
+         tfoot tr { background-color: #e0eafc !important; border-top: 2px solid var(--primary-color) !important; position: sticky !important; bottom: 0 !important; }
+         tfoot td { font-weight: bold !important; color: var(--heading-color) !important; background-color: #e0eafc !important; }
+        @media print { #export-sidebar, .page-controls, .filter-status, header { display: none !important; } body.export-view { margin-left: 0; padding: 0; } .chart-card, .analysis-section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; } .section-note-box { background-color: #fff; border-top: none; padding-top: 5px; margin-top: 5px; min-height: 0; font-style: normal; color: #555;} tfoot tr { background-color: #f0f0f0 !important; position: static !important; } tfoot td { background-color: #f0f0f0 !important;} }
+        */
+      /* HẾT CSS CHO FILE EXPORT */
+
+      header,
+      .analysis-section {
+        text-align: center;
+        margin-bottom: 25px;
+        padding: 25px 30px;
+        background-color: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        border: 1px solid var(--border-color);
+      }
+      h1 {
+        color: var(--heading-color);
+        margin: 0 0 10px 0;
+        font-size: 2.2em;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      h2 {
+        color: var(--heading-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+        margin-top: 40px;
+        text-align: left;
+        font-size: 1.6em;
+        font-weight: 600;
+      }
+      .file-uploader {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        align-items: center;
+        margin-top: 15px;
+        flex-wrap: wrap;
+      }
+      .file-uploader input[type="file"] {
+        padding: 12px 20px;
+        border: 2px dashed var(--primary-color);
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        cursor: pointer;
+        font-size: 1em;
+        color: #555;
+        transition: background-color 0.3s;
+      }
+      .file-uploader input[type="file"]:hover {
+        background-color: #e9eff8;
+      }
+      .file-uploader input[type="file"]::file-chooser-button {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: background-color 0.3s;
+      }
+      .file-uploader input[type="file"]::file-chooser-button:hover {
+        background-color: #357abd;
+      }
+      .export-full-btn {
+        padding: 12px 20px;
+        font-size: 1em;
+        background-color: var(--warning-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .export-full-btn:hover {
+        background-color: #e09414;
+      }
+      .export-full-btn i {
+        font-size: 1.1em;
+      }
+      #loadingMessage {
+        text-align: center;
+        font-size: 1.2em;
+        color: var(--text-color);
+        display: none;
+        margin-top: 20px;
+      }
+      .kpi-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+      .kpi-card {
+        background-color: var(--card-background);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        border: 1px solid var(--border-color);
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .kpi-icon {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(74, 144, 226, 0.1);
+      }
+      .kpi-icon svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--primary-color);
+      }
+      .kpi-info .kpi-title {
+        font-size: 0.9em;
+        color: var(--text-color);
+        margin: 0 0 5px 0;
+      }
+      .kpi-info .kpi-value {
+        font-size: 1.8em;
+        font-weight: 700;
+        color: var(--heading-color);
+        margin: 0;
+      }
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+        margin-top: 25px;
+        margin-bottom: 40px; /* <-- THÊM DÒNG NÀY */
+      }
+      .chart-card {
+        background-color: var(--card-background);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        padding: 20px;
+        box-sizing: border-box;
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+      }
+      .chart-card h3,
+      .analysis-section h3 {
+        margin-top: 0;
+        font-size: 1.2em;
+        color: var(--heading-color);
+        text-align: left;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .chart-canvas-wrapper {
+        position: relative;
+        flex-grow: 1;
+        height: 400px;
+      }
+      .interactive-table-container {
+        margin-top: 20px;
+        text-align: left;
+      }
+      .table-controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      .interactive-table-container input[type="text"],
+      .interactive-table-container select {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 1em;
+        background-color: #fff;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      .interactive-table-container input[type="text"] {
+        flex-grow: 1;
+        min-width: 200px;
+      }
+      .interactive-table-container select {
+        width: auto;
+        min-width: 200px;
+      }
+      .export-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .export-btn:hover {
+        background-color: #218838;
+      }
+      .export-btn i {
+        font-size: 1.1em;
+      }
+      .interactive-table-container input[type="text"]:focus,
+      .interactive-table-container select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25);
+        outline: none;
+      }
+      .table-wrapper {
+        max-height: 600px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: left;
+      }
+      thead th {
+        background-color: var(--primary-color);
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        font-weight: 600;
+      }
+      tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tbody tr:hover {
+        background-color: #e9eff8;
+      }
+      /* Style cho tfoot */
+      tfoot {
+        position: sticky; /* Ghim tfoot */
+        bottom: 0; /* Ghim vào cạnh dưới */
+        z-index: 1; /* Đảm bảo nó nổi lên trên tbody khi cuộn */
+      }
+      tfoot tr {
+        background-color: #e0eafc;
+        border-top: 2px solid var(--primary-color);
+      }
+      tfoot td {
+        font-weight: bold;
+        color: var(--heading-color);
+        background-color: #e0eafc; /* Đảm bảo ô có nền */
+      }
+      .price-diff-pos {
+        color: #198754;
+        font-weight: bold;
+      }
+      .price-diff-neg {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      #matchingChartContainer {
+        display: none;
+        margin-top: 20px;
+        height: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        padding: 20px;
+        background-color: var(--card-background);
+      }
+      .comparison-charts-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 100%;
+      }
+      .comparison-chart {
+        min-width: 300px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+      }
+      .comparison-chart h4 {
+        color: var(--heading-color);
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 1em;
+        flex-shrink: 0;
+      }
+      .filter-status {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        font-weight: bold;
+        z-index: 1001;
+        display: none;
+        box-sizing: border-box;
+      }
+      .page-controls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .control-btn {
+        padding: 10px 15px;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s, background-color 0.2s;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #scrollToTopBtn {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      #clearFilterBtn {
+        background-color: var(--danger-color);
+        color: white;
+      }
+      .control-btn:hover {
+        transform: translateY(-2px);
+      }
+      .custom-tooltip {
+        position: absolute;
+        display: none;
+        padding: 15px;
+        background-color: var(--heading-color);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        font-size: 0.9em;
+        z-index: 1002;
+        pointer-events: none;
+      }
+      .custom-tooltip h5 {
+        margin: 0 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        font-size: 1em;
+      }
+      .custom-tooltip ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .custom-tooltip li {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+      }
+      .tooltip-company {
+        flex-grow: 1;
+        padding-right: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tooltip-percentage {
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Dashboard Pro Phân Tích Nhập Khẩu</h1>
+      <p>
+        Tải file Excel (.xlsx) của bạn lên để xem báo cáo phân tích chuyên sâu
+      </p>
+      <div class="file-uploader">
+        <input type="file" id="excelFile" accept=".xlsx, .xls" />
+        <button
+          id="exportFullDashboardBtn"
+          class="export-full-btn"
+          style="display: none"
+        >
+          <i class="fas fa-download"></i> Export Full Dashboard
+        </button>
+      </div>
+      <div id="loadingMessage">Đang xử lý dữ liệu và vẽ biểu đồ...</div>
+    </header>
+
+    <div id="filterStatus" class="filter-status"></div>
+    <div class="page-controls">
+      <button id="clearFilterBtn" class="control-btn" style="display: none">
+        <i class="fas fa-eraser"></i>
+      </button>
+      <button id="scrollToTopBtn" class="control-btn">
+        <i class="fas fa-arrow-up"></i>
+      </button>
+    </div>
+
+    <main id="dashboardArea" style="display: none">
+      <div id="kpi-section" class="kpi-container">
+        <div class="kpi-card">
+          <div class="kpi-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h9.75a2.25 2.25 0 0 1 2.25 2.25Z"
+              />
+            </svg>
+          </div>
+          <div class="kpi-info">
+            <p class="kpi-title">Tổng Sản Lượng HQ (chiếc)</p>
+            <h3 id="totalQuantity" class="kpi-value">0</h3>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+          </div>
+          <div class="kpi-info">
+            <p class="kpi-title">Tổng Giá Trị Nhập Khẩu (VND)</p>
+            <h3 id="totalValue" class="kpi-value">0</h3>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6.75h1.5m-1.5 3h1.5m-1.5 3h1.5M15 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5"
+              />
+            </svg>
+          </div>
+          <div class="kpi-info">
+            <p class="kpi-title">Số Lượng Công Ty</p>
+            <h3 id="uniqueCompanies" class="kpi-value">0</h3>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0 1 3.75 9.375v-4.5ZM3.75 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 0 1-1.875-1.875v-4.5ZM13.5 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0 1 13.5 9.375v-4.5Z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13.5 14.625a1.875 1.875 0 0 1 1.875-1.875h4.5a1.875 1.875 0 0 1 1.875 1.875v4.5a1.875 1.875 0 0 1-1.875 1.875h-4.5a1.875 1.875 0 0 1-1.875-1.875v-4.5Z"
+              />
+            </svg>
+          </div>
+          <div class="kpi-info">
+            <p class="kpi-title">Số Lượng SKU Matched</p>
+            <h3 id="matchedSkus" class="kpi-value">0</h3>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+              />
+            </svg>
+          </div>
+          <div class="kpi-info">
+            <p class="kpi-title">Số Dòng Hàng Không Matching</p>
+            <h3 id="unmatchedEntries" class="kpi-value">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <h2 id="overview-section">Tổng Quan Thị Trường</h2>
+      <div class="dashboard-container">
+        <div class="chart-card">
+          <h3>1. Tổng Sản Lượng Hải Quan vs. Nhập Khẩu</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart1"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>2. Tổng Sản Lượng theo Trạng Thái Matching</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart2"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>3. Top 10 Công Ty Nhập Khẩu (Sản Lượng)</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart3"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>4. Top 10 Công Ty Nhập Khẩu (Giá Trị VND)</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart4"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>5. Tổng Sản Lượng theo Thị Trường Nhập Khẩu</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart5"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>6. Tổng Giá Trị (VND) theo Thị Trường Nhập Khẩu</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart6"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>7. Tổng Sản Lượng theo Cửa Khẩu</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart7"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>8. Đơn Giá HQ Trung Bình theo Thị Trường</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart8"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>9. Tổng Sản Lượng theo Cấu Hình RAM</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart9"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>10. Tổng Sản Lượng theo Cấu Hình SSD</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart10"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>11. Tổng Sản Lượng theo Hãng Chip</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart11"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>12. Top 20 Loại CHIP theo Sản Lượng</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart12"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>13. Đơn Giá HQ Trung Bình theo RAM</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart13"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>14. Đơn Giá HQ Trung Bình theo SSD</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart14"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>15. Tổng Sản Lượng Hải Quan theo Tháng</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart15"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>16. Thống Kê Sản Lượng Theo Hãng</h3>
+          <div class="chart-canvas-wrapper"><canvas id="chart16"></canvas></div>
+        </div>
+      </div>
+
+      <div id="unmatched-part-section" class="analysis-section">
+        <h2>Thống Kê Part Number Không Matching</h2>
+        <div class="interactive-table-container">
+          <div class="table-controls">
+            <input
+              type="text"
+              id="unmatchedSearch"
+              placeholder="Tìm kiếm part number không matching..."
+            />
+            <button id="exportUnmatchedBtn" class="export-btn">
+              <i class="fas fa-file-export"></i> Export HTML
+            </button>
+          </div>
+          <div class="table-wrapper">
+            <table id="unmatchedTable">
+              <thead>
+                <tr>
+                  <th>Partnumber Hải Quan</th>
+                  <th>Số Lần Xuất Hiện</th>
+                  <th>Tổng Sản Lượng (chiếc)</th>
+                  <th>Tổng Giá Trị (VND)</th>
+                  <th>Đơn Giá TB (VND)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="matching-analysis-section" class="analysis-section">
+        <h2>Phân Tích Chi Tiết Matching & So Sánh Giá</h2>
+        <div class="interactive-table-container">
+          <div class="table-controls">
+            <select id="matchingSelector"></select>
+            <input
+              type="text"
+              id="matchingSearch"
+              placeholder="Tìm kiếm trong bảng matching bên dưới..."
+            />
+            <button id="exportMatchingBtn" class="export-btn">
+              <i class="fas fa-file-export"></i> Export HTML
+            </button>
+          </div>
+
+          <div id="matchingChartContainer" class="chart-card">
+            <h3 id="matchingChartTitle"></h3>
+            <div class="comparison-charts-wrapper">
+              <div class="comparison-chart">
+                <h4>So sánh Sản Lượng (chiếc)</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="matchingQuantityChart"></canvas>
+                </div>
+              </div>
+              <div class="comparison-chart">
+                <h4>So sánh Đơn Giá Trung Bình (VND)</h4>
+                <div class="chart-canvas-wrapper">
+                  <canvas id="matchingPriceChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table id="matchingTable">
+              <thead>
+                <tr>
+                  <th>Tên Hàng (Đại Diện)</th>
+                  <th>SKU Matching (NKC)</th>
+                  <th>Tổng SL HQ (chiếc)</th>
+                  <th>Tổng SL NK (chiếc)</th>
+                  <th>Đơn Giá HQ TB (VND)</th>
+                  <th>Đơn Giá NK TB (VND)</th>
+                  <th>Chênh Lệch TB (HQ - NK)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="history-section" class="analysis-section">
+        <h2>Tra Cứu Lịch Sử Nhập Hàng</h2>
+        <div class="interactive-table-container">
+          <div class="table-controls">
+            <select id="companySelector"></select>
+            <select id="chipSelector"></select>
+            <input
+              type="text"
+              id="importsSearch"
+              placeholder="Tìm kiếm trong kết quả bên dưới..."
+            />
+            <button id="exportHistoryBtn" class="export-btn">
+              <i class="fas fa-file-export"></i> Export HTML
+            </button>
+          </div>
+          <div class="table-wrapper">
+            <table id="companyImportsTable">
+              <thead>
+                <tr>
+                  <th>Ngày</th>
+                  <th>Công ty Nhập khẩu</th>
+                  <th>Tên Hàng</th>
+                  <th>Số Lượng (chiếc)</th>
+                  <th>Đơn Giá HQ (VND)</th>
+                  <th>Thị Trường</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+              <tfoot></tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="distributorTooltip" class="custom-tooltip"></div>
+
+    <script id="main-processing-script">
+      // ... (Biến toàn cục và hàm tiện ích giữ nguyên) ...
+      let allCharts = [];
+      let fullData = [];
+      let matchingQuantityChart = null;
+      let matchingPriceChart = null;
+      let skuAggregatedData = {};
+      let unmatchedAggregatedData = {};
+      let currentFilter = null;
+      const CHART_PALETTE = [
+        "#4A90E2",
+        "#F5A623",
+        "#50E3C2",
+        "#BD10E0",
+        "#9013FE",
+        "#417505",
+        "#7ED321",
+        "#D0021B",
+      ];
+      const COMPARISON_COLORS = {
+        HQ: "rgba(74, 144, 226, 0.8)",
+        NK: "rgba(245, 166, 35, 0.8)",
+      };
+      const cleanNumeric = (val) => {
+        if (typeof val === "number") return val;
+        if (!val || typeof val !== "string") return 0;
+        return parseFloat(String(val).replace(/,/g, "")) || 0;
+      };
+      const groupBySum = (data, keyCol, valueCol) => {
+        const groups = {};
+        data.forEach((row) => {
+          const key = row[keyCol] || "Không xác định";
+          const value = cleanNumeric(row[valueCol]);
+          if (!groups[key]) groups[key] = 0;
+          groups[key] += value;
+        });
+        return groups;
+      };
+      const groupByMean = (data, keyCol, valueCol) => {
+        const groups = {};
+        const counts = {};
+        data.forEach((row) => {
+          const key = row[keyCol] || "Không xác định";
+          const value = cleanNumeric(row[valueCol]);
+          if (value > 0) {
+            if (!groups[key]) {
+              groups[key] = 0;
+              counts[key] = 0;
+            }
+            groups[key] += value;
+            counts[key]++;
+          }
+        });
+        const result = {};
+        for (const key in groups) {
+          result[key] = groups[key] / counts[key];
+        }
+        return result;
+      };
+      const getTopN = (dataObject, n) => {
+        return Object.entries(dataObject)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, n)
+          .reduce((obj, [key, value]) => {
+            obj[key] = value;
+            return obj;
+          }, {});
+      };
+      const formatForChart = (dataObject) => {
+        const labels = Object.keys(dataObject);
+        const values = Object.values(dataObject);
+        return { labels, values };
+      };
+
+      // --- Hàm vẽ biểu đồ ---
+      const createBarChart = (
+        canvasId,
+        title,
+        labels,
+        dataValues,
+        isHorizontal = false,
+        filterKey = null
+      ) => {
+        // ... (giữ nguyên) ...
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) {
+          console.error(`Canvas ${canvasId} not found`);
+          return;
+        }
+        const context = ctx.getContext("2d");
+        const chart = new Chart(context, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: title,
+                data: dataValues,
+                backgroundColor: CHART_PALETTE,
+              },
+            ],
+          },
+          options: {
+            indexAxis: isHorizontal ? "y" : "x",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              title: { display: false },
+              tooltip: { mode: "index", intersect: false },
+            },
+            onClick: (event, elements) => {
+              if (!filterKey || elements.length === 0) return;
+              const elementIndex = elements[0].index;
+              if (chart?.data?.labels) {
+                applyGlobalFilter(filterKey, chart.data.labels[elementIndex]);
+              }
+            },
+            scales: {
+              [isHorizontal ? "x" : "y"]: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function (value) {
+                    if (value >= 1e9) return (value / 1e9).toFixed(1) + " Tỷ";
+                    if (value >= 1e6) return (value / 1e6).toFixed(1) + " Tr";
+                    return value.toLocaleString("vi-VN");
+                  },
+                },
+              },
+              [isHorizontal ? "y" : "x"]: { ticks: { autoSkip: false } },
+            },
+          },
+        });
+        allCharts.push(chart);
+      };
+
+      // --- Hàm lọc toàn cục ---
+      function applyGlobalFilter(key, value) {
+        // ... (giữ nguyên) ...
+        if (
+          currentFilter &&
+          currentFilter.key === key &&
+          currentFilter.value === value
+        ) {
+          clearGlobalFilter();
+          return;
+        }
+        currentFilter = { key, value };
+        const filteredData = fullData.filter((row) => {
+          if (key === "Matching Status") {
+            const status =
+              row["SKU MATCHING NKC"] &&
+              row["SKU MATCHING NKC"] !== "Không matching"
+                ? "Matching"
+                : "Không matching";
+            return status === value;
+          }
+          const rowValue = row[key] ?? "Không xác định";
+          const filterValue = value ?? "Không xác định";
+          return String(rowValue) == String(filterValue);
+        });
+        const filterStatusDiv = document.getElementById("filterStatus");
+        if (filterStatusDiv) {
+          filterStatusDiv.innerHTML = `Đang lọc theo: <strong>${key} = "${value}"</strong>`;
+          filterStatusDiv.style.display = "block";
+        }
+        const clearBtn = document.getElementById("clearFilterBtn");
+        if (clearBtn) clearBtn.style.display = "flex";
+        updateAllVisuals(filteredData);
+        filterAndDisplayImports();
+      }
+
+      // --- (FIX LỖI) Hàm clearGlobalFilter ---
+      function clearGlobalFilter() {
+        // Lưu SKU đang chọn TRƯỚC KHI reset
+        const matchingSelector = document.getElementById("matchingSelector");
+        const previouslySelectedSku = matchingSelector
+          ? matchingSelector.value
+          : "";
+
+        currentFilter = null;
+        const filterStatusDiv = document.getElementById("filterStatus");
+        if (filterStatusDiv) filterStatusDiv.style.display = "none";
+        const clearBtn = document.getElementById("clearFilterBtn");
+        if (clearBtn) clearBtn.style.display = "none";
+
+        // Reset các dropdown khác ngay lập tức
+        const companySelector = document.getElementById("companySelector");
+        if (companySelector) companySelector.value = "";
+        const chipSelector = document.getElementById("chipSelector");
+        if (chipSelector) chipSelector.value = ""; // Reset chip luôn
+        // Reset matchingSelector về visually trống (nhưng giá trị đã lưu)
+        if (matchingSelector) matchingSelector.value = "";
+
+        // Update visuals với dữ liệu gốc (sẽ vẽ lại chart, tạo lại dropdown)
+        updateAllVisuals(fullData);
+
+        // SAU KHI updateAllVisuals chạy xong, dropdown đã được tạo lại
+        const newMatchingSelector = document.getElementById("matchingSelector"); // Lấy lại element dropdown mới
+        if (previouslySelectedSku && newMatchingSelector) {
+          // Kiểm tra xem SKU cũ có còn trong danh sách mới không
+          const optionExists = Array.from(newMatchingSelector.options).some(
+            (opt) => opt.value === previouslySelectedSku
+          );
+          if (optionExists) {
+            console.log(
+              "Restoring SKU after clear filter:",
+              previouslySelectedSku
+            );
+            newMatchingSelector.value = previouslySelectedSku; // Chọn lại SKU đó
+            updateMatchingAnalysis(); // Quan trọng: Gọi lại hàm vẽ chart so sánh
+          } else {
+            console.warn(
+              "Previously selected SKU no longer valid after filter clear:",
+              previouslySelectedSku
+            );
+            // Ẩn chart nếu SKU không hợp lệ
+            const chartContainer = document.getElementById(
+              "matchingChartContainer"
+            );
+            if (chartContainer) chartContainer.style.display = "none";
+            if (matchingQuantityChart) {
+              matchingQuantityChart.destroy();
+              matchingQuantityChart = null;
+            }
+            if (matchingPriceChart) {
+              matchingPriceChart.destroy();
+              matchingPriceChart = null;
+            }
+          }
+        } else {
+          // Nếu không có SKU nào được chọn trước đó, đảm bảo chart ẩn đi
+          const chartContainer = document.getElementById(
+            "matchingChartContainer"
+          );
+          if (chartContainer) chartContainer.style.display = "none";
+          if (matchingQuantityChart) {
+            matchingQuantityChart.destroy();
+            matchingQuantityChart = null;
+          }
+          if (matchingPriceChart) {
+            matchingPriceChart.destroy();
+            matchingPriceChart = null;
+          }
+        }
+        // Cập nhật lại bảng history (đã được gọi trong updateAllVisuals rồi)
+        // filterAndDisplayImports(); // Không cần gọi lại ở đây
+      }
+
+      // --- Hàm xử lý đọc file Excel ---
+      document
+        .getElementById("excelFile")
+        ?.addEventListener("change", function (event) {
+          // ... (giữ nguyên) ...
+          const file = event.target.files[0];
+          if (!file) return;
+          const lM = document.getElementById("loadingMessage");
+          if (lM) {
+            lM.textContent = "Đang đọc file Excel...";
+            lM.style.display = "block";
+          }
+          const dA = document.getElementById("dashboardArea");
+          if (dA) dA.style.display = "none";
+          const eB = document.getElementById("exportFullDashboardBtn");
+          if (eB) eB.style.display = "none";
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            try {
+              if (lM) lM.textContent = "Đang xử lý dữ liệu...";
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, {
+                type: "array",
+                cellDates: true,
+              });
+              const firstSheetName = workbook.SheetNames[0];
+              const worksheet = workbook.Sheets[firstSheetName];
+              fullData = XLSX.utils.sheet_to_json(worksheet);
+              if (lM) lM.textContent = "Đang vẽ biểu đồ...";
+              if (dA) dA.style.display = "block";
+              if (eB) eB.style.display = "flex";
+              initialSetupAndDraw(fullData);
+              if (lM) lM.style.display = "none";
+            } catch (err) {
+              if (lM) lM.innerText = "Lỗi xử lý file Excel.";
+              console.error("Lỗi:", err);
+            }
+          };
+          reader.onerror = function () {
+            if (lM) lM.innerText = "Lỗi đọc file.";
+            console.error("FileReader error:", reader.error);
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+      // --- Hàm khởi tạo và gắn listener ---
+      function initialSetupAndDraw(data) {
+        // ... (giữ nguyên phần gắn listener) ...
+        console.log("Running initialSetupAndDraw");
+        document
+          .getElementById("clearFilterBtn")
+          ?.addEventListener("click", clearGlobalFilter);
+        document
+          .getElementById("scrollToTopBtn")
+          ?.addEventListener("click", () =>
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          );
+        document
+          .getElementById("unmatchedSearch")
+          ?.addEventListener("keyup", (e) =>
+            filterTable("unmatchedTable", e.target.value)
+          );
+        document
+          .getElementById("matchingSearch")
+          ?.addEventListener("keyup", (e) =>
+            filterTable("matchingTable", e.target.value)
+          );
+        document
+          .getElementById("importsSearch")
+          ?.addEventListener("keyup", (e) =>
+            filterTable("companyImportsTable", e.target.value)
+          );
+        document
+          .getElementById("exportUnmatchedBtn")
+          ?.addEventListener("click", () =>
+            exportTableToHTML(
+              "unmatchedTable",
+              "Bao Cao Part Number Khong Matching"
+            )
+          );
+        document
+          .getElementById("exportMatchingBtn")
+          ?.addEventListener("click", () =>
+            exportTableToHTML(
+              "matchingTable",
+              "Bao Cao Matching Va So Sanh Gia"
+            )
+          );
+        document
+          .getElementById("exportHistoryBtn")
+          ?.addEventListener("click", () =>
+            exportTableToHTML(
+              "companyImportsTable",
+              "Bao Cao Lich Su Nhap Hang"
+            )
+          );
+        document
+          .getElementById("exportFullDashboardBtn")
+          ?.addEventListener("click", exportFullInteractiveDashboard);
+        updateAllVisuals(data);
+      }
+
+      // --- Hàm Export bảng đơn lẻ ---
+      function exportTableToHTML(tableId, filename) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        const thead = table.querySelector("thead").outerHTML;
+        let tbodyRows = "";
+        table.querySelectorAll("tbody tr").forEach((row) => {
+          if (row.style.display !== "none") {
+            tbodyRows += row.outerHTML;
+          }
+        });
+        const tbody = "<tbody>" + tbodyRows + "</tbody>";
+        const tfoot = table.querySelector("tfoot")?.outerHTML || "";
+        /* Lấy cả tfoot */ const htmlContent = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${filename}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:20px}table{width:100%;border-collapse:collapse;font-size:.9em}th,td{padding:10px 14px;border:1px solid #ddd;text-align:left}thead th{background-color:#4a90e2;color:#fff}tbody tr:nth-child(even){background-color:#f9f9f9}h1{color:#1c3d5a}.price-diff-pos{color:#198754;font-weight:700}.price-diff-neg{color:#dc3545;font-weight:700} tfoot tr{background-color:#e0eafc!important;border-top:2px solid #4a90e2!important}tfoot td{font-weight:700!important;color:#1c3d5a!important}</style></head><body><h1>Báo cáo: ${filename.replace(
+          /_/g,
+          " "
+        )}</h1><table>${thead}${tbody}${tfoot}</table></body></html>`;
+        const blob = new Blob([htmlContent], {
+          type: "text/html;charset=utf-8;",
+        });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${filename}.html`);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      // --- Hàm tải thư viện ---
+      async function fetchLibraryCode(url) {
+        /* ... giữ nguyên ... */
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.text();
+        } catch (error) {
+          console.error(`Lỗi tải ${url}:`, error);
+          alert(`Không thể tải thư viện ${url}.`);
+          return null;
+        }
+      }
+
+      // --- (NÂNG CẤP - SỬA LỖI NOTE BOX & CLEAR FILTER & HISTORY & TOP 20 & GHI NHỚ FILTER) Hàm Export Toàn Bộ Dashboard ---
+      async function exportFullInteractiveDashboard() {
+        console.log("Bắt đầu export dashboard (phiên bản nâng cấp)...");
+        const loadingMsg = document.getElementById("loadingMessage");
+        if (!loadingMsg) {
+          console.error("Loading message element not found!");
+          return;
+        }
+        loadingMsg.textContent = "Đang chuẩn bị dữ liệu export...";
+        loadingMsg.style.display = "block";
+        const currentSelectedSku =
+          document.getElementById("matchingSelector")?.value || "";
+
+        // *** BƯỚC 1: Lấy bộ lọc hiện tại ***
+        const currentFilterJsonString = JSON.stringify(currentFilter); // Lấy bộ lọc toàn cục hiện tại
+
+        loadingMsg.textContent = "Đang tải thư viện Chart.js...";
+        const chartjsCode = await fetchLibraryCode(
+          "https://cdn.jsdelivr.net/npm/chart.js"
+        );
+        if (!chartjsCode) {
+          loadingMsg.textContent = "Lỗi: Không tải được Chart.js.";
+          return;
+        }
+        loadingMsg.textContent = "Đang đóng gói dữ liệu...";
+        const chartDataPackage = {
+          overviewCharts: allCharts
+            .filter((c) => c?.canvas)
+            .map((c) => ({
+              id: c.canvas.id,
+              type: c.config.type,
+              data: c.data,
+              options: c.options,
+            })),
+          comparisonCharts: {},
+        };
+        let fullDataJsonString;
+        try {
+          fullDataJsonString = JSON.stringify(fullData);
+        } catch (e) {
+          console.error("Lỗi JSON:", e);
+          alert("Lỗi export dữ liệu.");
+          loadingMsg.style.display = "none";
+          return;
+        }
+
+        // --- Sao chép và Tinh chỉnh HTML (Nâng cấp) ---
+        loadingMsg.textContent =
+          "Đang tạo bản sao HTML và tiêm giao diện báo cáo...";
+        const doc = document.documentElement.cloneNode(true);
+        const head = doc.querySelector("head");
+        const body = doc.querySelector("body");
+
+        // Tiêm CSS cho giao diện báo cáo (Cập nhật CSS tfoot và section-note-box)
+        const exportStyle = document.createElement("style");
+        exportStyle.textContent = `
+                #export-sidebar { position: fixed; left: 0; top: 0; width: 260px; height: 100vh; background: var(--card-background); border-right: 1px solid var(--border-color); box-shadow: 4px 0 10px rgba(0,0,0,0.05); overflow-y: auto; z-index: 1010; padding: 20px; box-sizing: border-box; }
+                #export-sidebar h3 { margin-top: 0; color: var(--heading-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; font-size: 1.2em; }
+                #export-catalog-list { list-style: none; padding: 0; margin: 20px 0 0 0; }
+                #export-catalog-list li a { text-decoration: none; color: var(--primary-color); font-size: 0.9em; padding: 8px 10px; display: block; border-radius: 5px; margin-bottom: 5px; transition: all 0.2s; }
+                #export-catalog-list li a:hover { background-color: var(--background-color); color: var(--heading-color); }
+                #export-catalog-list li a.section-title { font-weight: 700; color: var(--heading-color); font-size: 1em; padding-left: 0; margin-top: 15px; }
+                #export-catalog-list li a.chart-title { padding-left: 20px; font-weight: 500; }
+                body.export-view { margin-left: 280px; padding: 20px 30px; }
+                .section-note-box { /* Style chung cho note box */
+                    padding: 10px 15px; margin-top: 15px; /* Giảm margin top cho chart */
+                    background-color: #f8f9fa; min-height: 20px;
+                    font-size: 0.85em; color: #777; /* Màu nhạt hơn */
+                    line-height: 1.5; font-style: italic;
+                    cursor: default; /* Không phải dạng text */
+                    border-top: 1px dashed var(--border-color);
+                }
+                .analysis-section > .section-note-box { /* Style riêng cho note box dưới bảng */
+                     margin-top: 25px; /* Tăng lại margin top */
+                     font-size: 0.9em; color: #555;
+                }
+                 tfoot { position: sticky !important; bottom: 0 !important; z-index: 1 !important; } /* Make tfoot sticky in export */
+                 tfoot tr { background-color: #e0eafc !important; border-top: 2px solid var(--primary-color) !important; }
+                 tfoot td { font-weight: bold !important; color: var(--heading-color) !important; background-color: #e0eafc !important; /* Ensure background */ }
+                @media print { #export-sidebar, .page-controls, .filter-status, header { display: none !important; } body.export-view { margin-left: 0; padding: 0; } .chart-card, .analysis-section { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; } .section-note-box { background-color: #fff; border-top: none; padding-top: 5px; margin-top: 5px; min-height: 0; font-style: normal; color: #555;} tfoot tr { background-color: #f0f0f0 !important; position: static !important; } tfoot td { background-color: #f0f0f0 !important;} }
+            `;
+        head.appendChild(exportStyle);
+
+        // Thêm class vào body và Tiêm HTML của sidebar
+        body.classList.add("export-view");
+        const sidebar = document.createElement("nav");
+        sidebar.id = "export-sidebar";
+        sidebar.innerHTML =
+          '<h3><i class="fas fa-sitemap"></i> Mục Lục Báo Cáo</h3><ul id="export-catalog-list"></ul>';
+        body.prepend(sidebar);
+
+        // (MỚI) Tiêm note box vào chart-card (1-16) và matchingChartContainer
+        doc.querySelectorAll(".chart-card").forEach((card) => {
+          const titleEl = card.querySelector("h3");
+          // Bỏ qua nếu không có title
+          if (!titleEl) return;
+          const titleText = titleEl.innerText;
+          // Kiểm tra xem có phải là 1 trong 16 chart chính không (dựa vào số ở đầu title)
+          // Hoặc là chart container matching
+          const isMainChart = /^\d+\./.test(titleText);
+          const isMatchingContainer = card.id === "matchingChartContainer";
+
+          if (isMainChart || isMatchingContainer) {
+            const noteBox = document.createElement("div");
+            noteBox.className = "section-note-box chart-note-box"; // Thêm class chart-note-box
+            // Sử dụng text cố định theo yêu cầu
+            noteBox.innerHTML = `[Ghi chú cho: ${titleText}]`; // Lấy text từ H3
+            card.appendChild(noteBox); // Thêm vào cuối card
+          }
+        });
+
+        // Tiêm note box vào analysis-section (BẢNG)
+        doc.querySelectorAll(".analysis-section").forEach((section, index) => {
+          const tableContainer = section.querySelector(
+            ".interactive-table-container"
+          );
+          const sectionTitle =
+            section.querySelector("h2")?.innerText || `Mục ${index + 1}`;
+          if (tableContainer) {
+            const noteBox = document.createElement("div");
+            noteBox.className = "section-note-box"; // Chỉ dùng class chung
+            noteBox.innerHTML = `[Ghi chú cho: ${sectionTitle}]`;
+            section.appendChild(noteBox);
+          }
+        });
+
+        // ... (Phần xóa script gốc, nhúng Chart.js, xóa nút... giữ nguyên) ...
+        const mainScript = body.querySelector("#main-processing-script");
+        if (mainScript) mainScript.remove();
+        const xlsxScript = head.querySelector("#xlsx-lib");
+        if (xlsxScript) xlsxScript.remove();
+        const chartjsScriptTag = head.querySelector("#chartjs-lib");
+        if (chartjsScriptTag) {
+          const nS = document.createElement("script");
+          nS.textContent = chartjsCode;
+          head.replaceChild(nS, chartjsScriptTag);
+        } else {
+          const nS = document.createElement("script");
+          nS.textContent = chartjsCode;
+          head.appendChild(nS);
+        }
+        const fU = body.querySelector(".file-uploader");
+        if (fU) fU.remove();
+        body.querySelectorAll(".export-btn").forEach((b) => b.remove());
+        const lMC = body.querySelector("#loadingMessage");
+        if (lMC) lMC.remove();
+        const mCCC = body.querySelector("#matchingChartContainer");
+        const oMCC = document.getElementById("matchingChartContainer");
+        if (mCCC && oMCC) {
+          mCCC.style.display = oMCC.style.display;
+        } else if (mCCC) {
+          mCCC.style.display = "none";
+        }
+
+        // --- (SỬA LỖI NOTE BOX & CLEAR FILTER & HISTORY & GHI NHỚ FILTER) Tạo Script Nhúng Mới ---
+        loadingMsg.textContent = "Đang tạo script nhúng...";
+        const embeddedScript = document.createElement("script");
+        embeddedScript.textContent = `
+                // --- Dữ liệu nhúng ---
+                const embeddedFullData = ${fullDataJsonString};
+                const initiallySelectedSku = "${currentSelectedSku}"; // Nhúng SKU
+
+                // *** BƯỚC 2: Nhúng bộ lọc ***
+                const initiallyActiveFilter = ${currentFilterJsonString}; // Nhúng bộ lọc
+
+                // --- Biến toàn cục ---
+                // ... (khai báo biến giữ nguyên) ...
+                let allCharts = []; let fullData = embeddedFullData; let matchingQuantityChart = null; let matchingPriceChart = null; let skuAggregatedData = {}; let unmatchedAggregatedData = {}; let currentFilter = null;
+                const CHART_PALETTE = ['#4A90E2', '#F5A623', '#50E3C2', '#BD10E0', '#9013FE', '#417505', '#7ED321', '#D0021B']; const COMPARISON_COLORS = { HQ: 'rgba(74, 144, 226, 0.8)', NK: 'rgba(245, 166, 35, 0.8)' };
+
+                // --- Nhúng các hàm tiện ích ---
+                // ... (giữ nguyên cleanNumeric, groupBy..., getTopN, formatForChart) ...
+                const cleanNumeric = ${cleanNumeric.toString()}; const groupBySum = ${groupBySum.toString()}; const groupByMean = ${groupByMean.toString()}; const getTopN = ${getTopN.toString()}; const formatForChart = ${formatForChart.toString()};
+
+                 // Hàm tạo mục lục cho file export
+                 function generateExportCatalog() { /* ... (giữ nguyên) ... */
+                     const cL=document.getElementById('export-catalog-list');if(!cL)return;cL.innerHTML="";const f=document.createDocumentFragment();let cC=1;const kS=document.getElementById('kpi-section');if(kS){kS.id="anchor-kpi";const li=document.createElement('li');li.innerHTML=\`<a href="#anchor-kpi" class="section-title">Tổng Quan KPIs</a>\`;f.appendChild(li)}const oS=document.getElementById('overview-section');if(oS){const li=document.createElement('li');li.innerHTML=\`<a href="#overview-section" class="section-title">\${oS.innerText}</a>\`;f.appendChild(li)}document.querySelectorAll('.chart-card:not(#matchingChartContainer)').forEach(c=>{const tE=c.querySelector('h3');const t=tE?tE.innerText:\`Biểu đồ \${cC}\`;const aI=\`anchor-chart-\${cC++}\`;c.id=aI;const li=document.createElement('li');li.innerHTML=\`<a href="#\${aI}" class="chart-title">\${t}</a>\`;f.appendChild(li)});document.querySelectorAll('.analysis-section').forEach((s,i)=>{const tE=s.querySelector('h2');const t=tE?tE.innerText:\`Bảng Phân Tích \${i+1}\`;const aI=s.id||\`anchor-section-\${i}\`;s.id=aI;const li=document.createElement('li');li.innerHTML=\`<a href="#\${aI}" class="section-title">\${t}</a>\`;f.appendChild(li)});cL.appendChild(f);
+                 }
+
+                // (ĐÃ XÓA) Hàm setupExportNotes
+
+                // --- (MỚI) Nhúng hàm addSummaryRowToHistoryTable ---
+                const addSummaryRowToHistoryTable = ${addSummaryRowToHistoryTable.toString()};
+
+                 // --- Nhúng các hàm xử lý chính ---
+                 const createBarChart = (canvasId, title, labels, dataValues, isHorizontal = false, filterKey = null) => { /* ... (giữ nguyên) ... */
+                     const ctx=document.getElementById(canvasId);if(!ctx){console.error(\`Canvas \${canvasId} not found\`);return}const context=ctx.getContext('2d');const chart=new Chart(context,{type:'bar',data:{labels:labels,datasets:[{label:title,data:dataValues,backgroundColor:CHART_PALETTE}]},options:{indexAxis:isHorizontal?'y':'x',responsive:!0,maintainAspectRatio:!1,plugins:{legend:{display:!1},title:{display:!1},tooltip:{mode:'index',intersect:!1}},onClick:(e,el)=>{if(!filterKey||el.length===0)return;const idx=el[0].index;if(chart?.data?.labels){applyGlobalFilter(filterKey,chart.data.labels[idx])}},scales:{[isHorizontal?'x':'y']:{beginAtZero:!0,ticks:{callback:function(v){if(v>=1e9)return(v/1e9).toFixed(1)+' Tỷ';if(v>=1e6)return(v/1e6).toFixed(1)+' Tr';return v.toLocaleString('vi-VN')}}},[isHorizontal?'y':'x']:{ticks:{autoSkip:!1}}}}});allCharts.push(chart);
+                 };
+
+                const applyGlobalFilter = ${applyGlobalFilter.toString()};
+                // *** (FIX LỖI) Nhúng hàm clearGlobalFilter ĐÃ SỬA ***
+                const clearGlobalFilter = function() {
+                    const matchingSelector = document.getElementById('matchingSelector');
+                    const previouslySelectedSku = matchingSelector ? matchingSelector.value : "";
+                    currentFilter = null;
+                    const filterStatusDiv = document.getElementById('filterStatus'); if(filterStatusDiv) filterStatusDiv.style.display = 'none';
+                    const clearBtn = document.getElementById('clearFilterBtn'); if(clearBtn) clearBtn.style.display = 'none';
+                    const companySelector = document.getElementById('companySelector'); if(companySelector) companySelector.value = "";
+                    const chipSelector = document.getElementById('chipSelector'); if(chipSelector) chipSelector.value = "";
+                    if(matchingSelector) matchingSelector.value = "";
+                    updateAllVisuals(fullData); // This redraws charts and rebuilds dropdowns
+
+                    // Restore matching selection AFTER updateAllVisuals
+                    const newMatchingSelector = document.getElementById('matchingSelector');
+                    if (previouslySelectedSku && newMatchingSelector) {
+                        const optionExists = Array.from(newMatchingSelector.options).some(opt => opt.value === previouslySelectedSku);
+                        if (optionExists) {
+                            console.log("Restoring SKU after clear filter:", previouslySelectedSku);
+                            newMatchingSelector.value = previouslySelectedSku;
+                            updateMatchingAnalysis(); // Redraw comparison charts
+                        } else {
+                            console.warn("Previously selected SKU invalid:", previouslySelectedSku);
+                            const cC = document.getElementById('matchingChartContainer'); if(cC) cC.style.display = 'none';
+                            if (matchingQuantityChart) { matchingQuantityChart.destroy(); matchingQuantityChart = null; }
+                            if (matchingPriceChart) { matchingPriceChart.destroy(); matchingPriceChart = null; }
+                        }
+                    } else {
+                        const cC = document.getElementById('matchingChartContainer'); if(cC) cC.style.display = 'none';
+                        if (matchingQuantityChart) { matchingQuantityChart.destroy(); matchingQuantityChart = null; }
+                        if (matchingPriceChart) { matchingPriceChart.destroy(); matchingPriceChart = null; }
+                    }
+                    // filterAndDisplayImports is called within updateAllVisuals, which calls addSummaryRow
+                };
+                // *** Hết phần sửa clearGlobalFilter ***
+
+                const populateUnmatchedTable = ${populateUnmatchedTable.toString()};
+                const showDistributorTooltip = ${showDistributorTooltip.toString()};
+                const hideDistributorTooltip = ${hideDistributorTooltip.toString()};
+                const populateMatchingTable = ${populateMatchingTable.toString()};
+                // *** (FIX LỖI HISTORY) Nhúng hàm setupMatchingSelector ĐÃ SỬA ***
+                const setupMatchingSelector = ${setupMatchingSelector.toString()}; // Already includes listener re-attachment
+                const updateMatchingAnalysis = ${updateMatchingAnalysis.toString()};
+                // *** (FIX LỖI HISTORY) Nhúng hàm setupCompanySelector ĐÃ SỬA ***
+                const setupCompanySelector = ${setupCompanySelector.toString()}; // Already calls setupChipSelector on change
+                // *** (FIX LỖI HISTORY) Nhúng hàm setupChipSelector ĐÃ SỬA ***
+                const setupChipSelector = ${setupChipSelector.toString()}; // Filters based on company
+                // *** (FIX LỖI HISTORY) Nhúng hàm filterAndDisplayImports ĐÃ SỬA ***
+                const filterAndDisplayImports = ${filterAndDisplayImports.toString()}; // Calls addSummaryRow
+                const populateImportsTable = ${populateImportsTable.toString()};
+                const filterTable = ${filterTable.toString()};
+                const updateAllVisuals = ${updateAllVisuals.toString()}; // Calls addSummaryRow
+
+                // *** BƯỚC 3: Thay thế hàm initialSetupExported ***
+                // --- Hàm khởi tạo cho file export (SỬA LỖI NOTE BOX & CLEAR FILTER & HISTORY & GHI NHỚ FILTER) ---
+                function initialSetupExported() {
+                    console.log("Running initialSetupExported (Upgraded Version - Fix)");
+
+                    document.getElementById('clearFilterBtn')?.addEventListener('click', clearGlobalFilter); // Sử dụng hàm đã sửa
+                    document.getElementById('scrollToTopBtn')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+                    document.getElementById('unmatchedSearch')?.addEventListener('keyup', (e) => filterTable('unmatchedTable', e.target.value));
+                    document.getElementById('matchingSearch')?.addEventListener('keyup', (e) => filterTable('matchingTable', e.target.value));
+                    document.getElementById('importsSearch')?.addEventListener('keyup', (e) => filterTable('companyImportsTable', e.target.value));
+
+                    const dashboardArea = document.getElementById('dashboardArea');
+                    if(dashboardArea) dashboardArea.style.display = 'block';
+
+                    // Parse Date objects
+                    fullData.forEach(row => { const dC='Ngay'; if (row[dC] && typeof row[dC]==='string') { const pD=new Date(row[dC]); if (!isNaN(pD)) { row[dC]=pD; } } });
+
+                    // **QUAN TRỌNG**: Chạy updateAllVisuals với FULL data TRƯỚC
+                    // Việc này để vẽ chart và tạo các dropdowns
+                    updateAllVisuals(fullData);
+
+                    // Khôi phục trạng thái dropdown và biểu đồ matching
+                    const matchingSelector = document.getElementById('matchingSelector');
+                    if (initiallySelectedSku && matchingSelector) {
+                        const optionExists = Array.from(matchingSelector.options).some(opt => opt.value === initiallySelectedSku);
+                        if (optionExists) {
+                             console.log("Restoring selected SKU:", initiallySelectedSku);
+                             matchingSelector.value = initiallySelectedSku;
+                             updateMatchingAnalysis(); // Vẽ lại chart so sánh
+                        } else {
+                             console.warn("Initially selected SKU not found:", initiallySelectedSku);
+                              const cC = document.getElementById('matchingChartContainer'); if(cC) cC.style.display = 'none';
+                        }
+                    } else {
+                          const cC = document.getElementById('matchingChartContainer'); if(cC) cC.style.display = 'none';
+                    }
+
+                    // --- PHẦN SỬA LỖI KPI ---
+                    // Sau khi đã vẽ mọi thứ, áp dụng lại bộ lọc (nếu có)
+                    if (initiallyActiveFilter) {
+                        console.log("Restoring active filter:", initiallyActiveFilter);
+                        // Hàm này sẽ tự động gọi updateAllVisuals với dữ liệu đã lọc
+                        applyGlobalFilter(initiallyActiveFilter.key, initiallyActiveFilter.value);
+                    }
+                    // --- HẾT PHẦN SỬA ---
+
+                    // Tạo mục lục
+                    generateExportCatalog();
+
+                    // (ĐÃ XÓA) Không còn gọi setupExportNotes
+
+                    console.log("Initial setup for exported file complete.");
+                }
+
+
+                // --- Chạy khởi tạo ---
+                window.addEventListener('DOMContentLoaded', initialSetupExported);
+            `;
+        body.appendChild(embeddedScript);
+
+        // --- Xuất file ---
+        // ... (Phần xuất file giữ nguyên) ...
+        loadingMsg.textContent = "Đang tạo file HTML...";
+        const fullHtml = "<!DOCTYPE html>\n" + doc.outerHTML;
+        const blob = new Blob([fullHtml], { type: "text/html;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        const timestamp = new Date().toISOString().slice(0, 10);
+        link.setAttribute("href", url);
+        link.setAttribute(
+          "download",
+          `Full_Interactive_Report_${timestamp}.html`
+        );
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        loadingMsg.style.display = "none";
+        console.log("Export báo cáo nâng cao hoàn tất!");
+      }
+
+      // --- (FIX LỖI HISTORY & TOP 20 & CHART 4,6) Hàm cập nhật toàn bộ Visuals ---
+      function updateAllVisuals(data) {
+        console.log("Updating all visuals...");
+        // Hủy chart cũ
+        if (matchingQuantityChart) {
+          matchingQuantityChart.destroy();
+          matchingQuantityChart = null;
+        }
+        if (matchingPriceChart) {
+          matchingPriceChart.destroy();
+          matchingPriceChart = null;
+        }
+        allCharts.forEach((c) => {
+          if (c) c.destroy();
+        });
+        allCharts = [];
+
+        // Định nghĩa tên cột
+        const sl_hq = "San luong hai quan (chiếc)",
+          sl_nk = "San luong NK (chiec)",
+          tg_vnd = "Tri gia (VND)",
+          unit_hq = "Unit hai quan (VND)",
+          match_col = "SKU MATCHING NKC",
+          cty_col = "Cong ty Nhap khau",
+          tt_col = "Thi truong nhap khau",
+          ck_col = "Cua khau",
+          ram = "RAM",
+          ssd = "SSD",
+          h_chip = "Hang Chip",
+          chip = "CHIP",
+          ngay = "Ngay",
+          hang = "Hang";
+
+        // --- (MỚI) Thêm cột tính toán Tổng Giá Trị cho mỗi dòng ---
+        const calc_tg_vnd = "calculated_total_value_vnd"; // Đặt tên cho cột mới
+        data.forEach((r) => {
+          r[calc_tg_vnd] = cleanNumeric(r[sl_hq]) * cleanNumeric(r[unit_hq]);
+        });
+
+        // Tính KPIs (ĐÃ SỬA tV VÀ ĐƠN VỊ)
+        const tQ = data.reduce((s, r) => s + cleanNumeric(r[sl_hq]), 0);
+        const tV = data.reduce(
+          (s, r) => s + cleanNumeric(r[sl_hq]) * cleanNumeric(r[unit_hq]),
+          0
+        ); // Sửa cách tính tV
+        const uC = new Set(data.map((r) => r[cty_col]).filter(Boolean)).size;
+        populateMatchingTable(data);
+        populateUnmatchedTable(data); // Tính lại aggregated data
+        const mSC = Object.keys(skuAggregatedData).length;
+        const uEC = data.filter(
+          (r) => !r[match_col] || r[match_col] === "Không matching"
+        ).length;
+        const tQEl = document.getElementById("totalQuantity");
+        if (tQEl) tQEl.textContent = tQ.toLocaleString("vi-VN");
+        const tVEl = document.getElementById("totalValue");
+        if (tVEl) tVEl.textContent = (tV / 1e9).toFixed(2) + " Tỷ"; // Sửa đơn vị tV
+        const uCEl = document.getElementById("uniqueCompanies");
+        if (uCEl) uCEl.textContent = uC.toLocaleString("vi-VN");
+        const mSEl = document.getElementById("matchedSkus");
+        if (mSEl) mSEl.textContent = mSC.toLocaleString("vi-VN");
+        const uEEl = document.getElementById("unmatchedEntries");
+        if (uEEl) uEEl.textContent = uEC.toLocaleString("vi-VN");
+
+        // Vẽ lại 16 biểu đồ chính (SỬA CHART 4, 6, 12)
+        const dWM = data.map((r) => ({
+          ...r,
+          "Matching Status":
+            r[match_col] && r[match_col] !== "Không matching"
+              ? "Matching"
+              : "Không matching",
+        }));
+        createBarChart(
+          "chart1",
+          "SL HQ vs. NK",
+          ["Sản lượng HQ", "Sản lượng NK"],
+          [tQ, data.reduce((s, r) => s + cleanNumeric(r[sl_nk]), 0)]
+        );
+        createBarChart(
+          "chart2",
+          "SL theo Matching",
+          ...Object.values(
+            formatForChart(groupBySum(dWM, "Matching Status", sl_hq))
+          ),
+          !1,
+          "Matching Status"
+        );
+        createBarChart(
+          "chart3",
+          "Top 10 Cty (SL)",
+          ...Object.values(
+            formatForChart(getTopN(groupBySum(data, cty_col, sl_hq), 10))
+          ),
+          !0,
+          cty_col
+        );
+        createBarChart(
+          "chart4",
+          "Top 10 Cty (VND)",
+          ...Object.values(
+            formatForChart(getTopN(groupBySum(data, cty_col, calc_tg_vnd), 10))
+          ),
+          !0,
+          cty_col
+        ); // Sửa chart 4
+        createBarChart(
+          "chart5",
+          "SL theo Thị Trường",
+          ...Object.values(formatForChart(groupBySum(data, tt_col, sl_hq))),
+          !0,
+          tt_col
+        );
+        createBarChart(
+          "chart6",
+          "VND theo Thị Trường",
+          ...Object.values(
+            formatForChart(groupBySum(data, tt_col, calc_tg_vnd))
+          ),
+          !0,
+          tt_col
+        ); // Sửa chart 6
+        createBarChart(
+          "chart7",
+          "SL theo Cửa Khẩu",
+          ...Object.values(formatForChart(groupBySum(data, ck_col, sl_hq))),
+          !0,
+          ck_col
+        );
+        createBarChart(
+          "chart8",
+          "Giá TB theo Thị Trường",
+          ...Object.values(formatForChart(groupByMean(data, tt_col, unit_hq))),
+          !0,
+          tt_col
+        );
+        createBarChart(
+          "chart9",
+          "SL theo RAM",
+          ...Object.values(formatForChart(groupBySum(data, ram, sl_hq))),
+          !1,
+          ram
+        );
+        createBarChart(
+          "chart10",
+          "SL theo SSD",
+          ...Object.values(formatForChart(groupBySum(data, ssd, sl_hq))),
+          !1,
+          ssd
+        );
+        createBarChart(
+          "chart11",
+          "SL theo Hãng Chip",
+          ...Object.values(formatForChart(groupBySum(data, h_chip, sl_hq))),
+          !1,
+          h_chip
+        );
+        createBarChart(
+          "chart12",
+          "Top 20 CHIP (SL)",
+          ...Object.values(
+            formatForChart(getTopN(groupBySum(data, chip, sl_hq), 20))
+          ),
+          true,
+          chip
+        );
+        createBarChart(
+          "chart13",
+          "Giá TB theo RAM",
+          ...Object.values(formatForChart(groupByMean(data, ram, unit_hq))),
+          !1,
+          ram
+        );
+        createBarChart(
+          "chart14",
+          "Giá TB theo SSD",
+          ...Object.values(formatForChart(groupByMean(data, ssd, unit_hq))),
+          !1,
+          ssd
+        );
+        const slBM = {};
+        data.forEach((r) => {
+          const d = r[ngay];
+          if (d instanceof Date && !isNaN(d)) {
+            const ym = `${d.getFullYear()}-${(d.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}`;
+            if (!slBM[ym]) slBM[ym] = 0;
+            slBM[ym] += cleanNumeric(r[sl_hq]);
+          }
+        });
+        const sM = Object.keys(slBM).sort();
+        createBarChart(
+          "chart15",
+          "SL theo Tháng",
+          sM,
+          sM.map((m) => slBM[m])
+        );
+        createBarChart(
+          "chart16",
+          "SL theo Hãng",
+          ...Object.values(formatForChart(groupBySum(data, hang, sl_hq))),
+          !0,
+          hang
+        );
+
+        // Setup lại dropdowns
+        setupMatchingSelector(data); // Setup dropdown SKU
+        setupCompanySelector(data); // Setup dropdown Công ty (sẽ gọi setupChipSelector bên trong)
+        // setupChipSelector(data); // <-- KHÔNG cần gọi riêng ở đây nữa
+
+        // Cập nhật bảng History cuối cùng, sau khi dropdowns đã setup xong
+        filterAndDisplayImports(); // Hàm này giờ đã gọi addSummaryRowToHistoryTable
+
+        console.log("Visuals update complete.");
+      }
+
+      // --- Các hàm populate bảng, tooltip, setup selectors, filter bảng ---
+      // *** HÀM populateUnmatchedTable ĐÃ ĐƯỢC SỬA LỖI TOOLTIP ***
+      function populateUnmatchedTable(data) {
+        const tableBody = document.querySelector("#unmatchedTable tbody");
+        if (!tableBody) return;
+        tableBody.innerHTML = "";
+        unmatchedAggregatedData = {};
+        const unmatchedData = data.filter(
+          (row) =>
+            !row["SKU MATCHING NKC"] ||
+            row["SKU MATCHING NKC"] === "Không matching"
+        );
+
+        unmatchedData.forEach((row) => {
+          const partNumber =
+            row["Partnumber hai quan"] || "Không có partnumber";
+          const company = row["Cong ty Nhap khau"] || "Không rõ";
+          const quantity = cleanNumeric(row["San luong hai quan (chiếc)"]);
+          // SỬA Ở ĐÂY: DÙNG GIÁ TRỊ TÍNH TOÁN NẾU 'Tri gia (VND)' không có
+          const value =
+            cleanNumeric(row["Tri gia (VND)"]) ||
+            cleanNumeric(row["San luong hai quan (chiếc)"]) *
+              cleanNumeric(row["Unit hai quan (VND)"]); // Ưu tiên 'Tri gia', nếu không có thì tính toán
+
+          if (!unmatchedAggregatedData[partNumber]) {
+            unmatchedAggregatedData[partNumber] = {
+              count: 0,
+              totalQuantity: 0,
+              totalValue: 0,
+              companyDistribution: {},
+            };
+          }
+          unmatchedAggregatedData[partNumber].count++;
+          unmatchedAggregatedData[partNumber].totalQuantity += quantity;
+          unmatchedAggregatedData[partNumber].totalValue += value; // Cộng dồn giá trị đã xác định
+          unmatchedAggregatedData[partNumber].companyDistribution[company] =
+            (unmatchedAggregatedData[partNumber].companyDistribution[company] ||
+              0) + quantity;
+        });
+
+        const sortedStats = Object.entries(unmatchedAggregatedData)
+          .map(([partNumber, stats]) => ({
+            partNumber,
+            ...stats,
+            avgPrice:
+              stats.totalQuantity > 0
+                ? stats.totalValue / stats.totalQuantity
+                : 0,
+          }))
+          .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+        const fragment = document.createDocumentFragment();
+        sortedStats.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${item.partNumber}</td>
+                                <td>${item.count.toLocaleString("vi-VN")}</td>
+                                <td><b>${item.totalQuantity.toLocaleString(
+                                  "vi-VN"
+                                )}</b></td>
+                                <td>${item.totalValue.toLocaleString(
+                                  "vi-VN"
+                                )}</td>
+                                <td>${item.avgPrice.toLocaleString("vi-VN", {
+                                  maximumFractionDigits: 0,
+                                })}</td>`;
+
+          // *** Gắn lại event listener cho tooltip ***
+          tr.addEventListener("mouseenter", (event) =>
+            showDistributorTooltip(event, item.partNumber)
+          );
+          tr.addEventListener("mouseleave", hideDistributorTooltip);
+          tr.addEventListener("mousemove", (event) => {
+            const tooltip = document.getElementById("distributorTooltip");
+            if (tooltip) {
+              tooltip.style.left = event.pageX + 15 + "px";
+              tooltip.style.top = event.pageY + 15 + "px";
+            }
+          });
+          fragment.appendChild(tr);
+        });
+        tableBody.appendChild(fragment);
+      }
+
+      function showDistributorTooltip(event, partNumber) {
+        const tooltip = document.getElementById("distributorTooltip");
+        if (!tooltip) return;
+        const data = unmatchedAggregatedData[partNumber];
+        if (!data || !data.companyDistribution) return;
+        let content = `<h5>Phân phối SL cho: ${partNumber}</h5><ul>`;
+        const totalQty = data.totalQuantity;
+        const sortedCompanies = Object.entries(data.companyDistribution).sort(
+          ([, qtyA], [, qtyB]) => qtyB - qtyA
+        );
+        if (totalQty > 0 && sortedCompanies.length > 0) {
+          const companiesToShow = sortedCompanies.slice(0, 10);
+          companiesToShow.forEach(([company, qty]) => {
+            const percentage = ((qty / totalQty) * 100).toFixed(1);
+            content += `<li><span class="tooltip-company">${company} (${qty.toLocaleString(
+              "vi-VN"
+            )})</span> <span class="tooltip-percentage">${percentage}%</span></li>`;
+          });
+          if (sortedCompanies.length > 10) {
+            content += `<li>... và ${
+              sortedCompanies.length - 10
+            } công ty khác</li>`;
+          }
+        } else {
+          content += "<li>Không có dữ liệu phân phối.</li>";
+        }
+        content += "</ul>";
+        tooltip.innerHTML = content;
+        tooltip.style.left = event.pageX + 15 + "px";
+        tooltip.style.top = event.pageY + 15 + "px";
+        tooltip.style.display = "block";
+      }
+      function hideDistributorTooltip() {
+        const tooltip = document.getElementById("distributorTooltip");
+        if (tooltip) tooltip.style.display = "none";
+      }
+      function populateMatchingTable(data) {
+        /* ... giữ nguyên ... */ const tB = document.querySelector(
+          "#matchingTable tbody"
+        );
+        if (!tB) return;
+        tB.innerHTML = "";
+        skuAggregatedData = {};
+        const mD = data.filter(
+          (r) =>
+            r["SKU MATCHING NKC"] && r["SKU MATCHING NKC"] !== "Không matching"
+        );
+        mD.forEach((r) => {
+          const sku = r["SKU NKC "] || r["SKU MATCHING NKC"];
+          if (!sku) return;
+          if (!skuAggregatedData[sku]) {
+            skuAggregatedData[sku] = {
+              tenHang: r["Ten hang"] || sku,
+              totalSL_HQ: 0,
+              totalSL_NK: 0,
+              priceHQValues: [],
+              priceNKValues: [],
+            };
+          }
+          skuAggregatedData[sku].totalSL_HQ += cleanNumeric(
+            r["San luong hai quan (chiếc)"]
+          );
+          skuAggregatedData[sku].totalSL_NK += cleanNumeric(
+            r["San luong NK (chiec)"]
+          );
+          const pHQ = cleanNumeric(r["Unit hai quan (VND)"]);
+          const pNK = cleanNumeric(r["Unit NK (VND)"]);
+          if (pHQ > 0) skuAggregatedData[sku].priceHQValues.push(pHQ);
+          if (pNK > 0) skuAggregatedData[sku].priceNKValues.push(pNK);
+        });
+        const f = document.createDocumentFragment();
+        Object.keys(skuAggregatedData)
+          .sort()
+          .forEach((sku) => {
+            const g = skuAggregatedData[sku];
+            const aPHQ = g.priceHQValues.length
+              ? g.priceHQValues.reduce((a, b) => a + b, 0) /
+                g.priceHQValues.length
+              : 0;
+            const aPNK = g.priceNKValues.length
+              ? g.priceNKValues.reduce((a, b) => a + b, 0) /
+                g.priceNKValues.length
+              : 0;
+            const diff = aPHQ - aPNK;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${
+              g.tenHang
+            }</td><td data-sku="${sku}">${sku}</td><td><b>${g.totalSL_HQ.toLocaleString(
+              "vi-VN"
+            )}</b></td><td><b>${g.totalSL_NK.toLocaleString(
+              "vi-VN"
+            )}</b></td><td>${aPHQ.toLocaleString("vi-VN", {
+              maximumFractionDigits: 0,
+            })}</td><td>${aPNK.toLocaleString("vi-VN", {
+              maximumFractionDigits: 0,
+            })}</td><td class="${
+              diff >= 0 ? "price-diff-pos" : "price-diff-neg"
+            }">${diff.toLocaleString("vi-VN", {
+              maximumFractionDigits: 0,
+            })}</td>`;
+            f.appendChild(tr);
+          });
+        tB.appendChild(f);
+      }
+      function setupMatchingSelector(data) {
+        /* ... giữ nguyên ... */ const s =
+          document.getElementById("matchingSelector");
+        if (!s) return;
+        const cV = s.value;
+        s.innerHTML = '<option value="">-- Chọn SKU để so sánh --</option>';
+        const sN = Object.keys(skuAggregatedData).sort();
+        sN.forEach((n) => {
+          const o = document.createElement("option");
+          o.value = n;
+          o.textContent = n;
+          s.appendChild(o);
+        });
+        const nS = s.cloneNode(!0);
+        s.parentNode.replaceChild(nS, s);
+        nS.value = sN.includes(cV) ? cV : "";
+        nS.addEventListener("change", updateMatchingAnalysis);
+      }
+      function updateMatchingAnalysis() {
+        /* ... giữ nguyên ... */ const s =
+          document.getElementById("matchingSelector");
+        if (!s) return;
+        const sS = s.value;
+        const cC = document.getElementById("matchingChartContainer");
+        if (!cC) return;
+        filterTable("matchingTable", sS, 1);
+        if (!sS || !skuAggregatedData[sS]) {
+          cC.style.display = "none";
+          if (matchingQuantityChart) {
+            matchingQuantityChart.destroy();
+            matchingQuantityChart = null;
+          }
+          if (matchingPriceChart) {
+            matchingPriceChart.destroy();
+            matchingPriceChart = null;
+          }
+          return;
+        }
+        cC.style.display = "block";
+        const sD = skuAggregatedData[sS];
+        const cTEl = document.getElementById("matchingChartTitle");
+        if (cTEl) cTEl.innerText = "So sánh chi tiết SKU: " + sS;
+        if (matchingQuantityChart) matchingQuantityChart.destroy();
+        if (matchingPriceChart) matchingPriceChart.destroy();
+        const cO = {
+          indexAxis: "y",
+          responsive: !0,
+          maintainAspectRatio: !1,
+          scales: {
+            x: {
+              beginAtZero: !0,
+              ticks: { callback: (v) => v.toLocaleString("vi-VN") },
+            },
+          },
+          plugins: {
+            legend: { display: !1 },
+            tooltip: { mode: "index", intersect: !1 },
+          },
+        };
+        const l = ["Hải Quan (HQ)", "Nhập Khẩu (NK)"];
+        const qC = document.getElementById("matchingQuantityChart");
+        if (qC) {
+          const qCtx = qC.getContext("2d");
+          matchingQuantityChart = new Chart(qCtx, {
+            type: "bar",
+            data: {
+              labels: l,
+              datasets: [
+                {
+                  label: "Tổng Sản Lượng",
+                  data: [sD.totalSL_HQ, sD.totalSL_NK],
+                  backgroundColor: [COMPARISON_COLORS.HQ, COMPARISON_COLORS.NK],
+                },
+              ],
+            },
+            options: cO,
+          });
+        }
+        const pC = document.getElementById("matchingPriceChart");
+        if (pC) {
+          const pCtx = pC.getContext("2d");
+          const aPHQ = sD.priceHQValues.length
+            ? sD.priceHQValues.reduce((a, b) => a + b, 0) /
+              sD.priceHQValues.length
+            : 0;
+          const aPNK = sD.priceNKValues.length
+            ? sD.priceNKValues.reduce((a, b) => a + b, 0) /
+              sD.priceNKValues.length
+            : 0;
+          matchingPriceChart = new Chart(pCtx, {
+            type: "bar",
+            data: {
+              labels: l,
+              datasets: [
+                {
+                  label: "Đơn Giá TB",
+                  data: [aPHQ, aPNK],
+                  backgroundColor: [COMPARISON_COLORS.HQ, COMPARISON_COLORS.NK],
+                },
+              ],
+            },
+            options: cO,
+          });
+        }
+      }
+      // *** (FIX LỖI HISTORY) Hàm setupCompanySelector ***
+      function setupCompanySelector(data) {
+        const selector = document.getElementById("companySelector");
+        if (!selector) return;
+        const currentVal = selector.value;
+        const companyNames = [
+          ...new Set(
+            data.map((row) => row["Cong ty Nhap khau"]).filter(Boolean)
+          ),
+        ].sort();
+        selector.innerHTML = '<option value="">-- Tất cả Công ty --</option>';
+        companyNames.forEach((name) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          selector.appendChild(option);
+        });
+        const newSelector = selector.cloneNode(true);
+        selector.parentNode.replaceChild(newSelector, selector);
+        newSelector.value = companyNames.includes(currentVal) ? currentVal : "";
+        newSelector.addEventListener("change", () => {
+          const selectedCompany = newSelector.value;
+          setupChipSelector(fullData, selectedCompany); // Update chip list
+          filterAndDisplayImports(); // Filter history table
+        });
+        // Initial call to filter chips based on potentially pre-selected company
+        setupChipSelector(fullData, newSelector.value);
+      }
+      // *** (FIX LỖI HISTORY) Hàm setupChipSelector ***
+      function setupChipSelector(data, selectedCompany = "") {
+        // Added selectedCompany parameter
+        const selector = document.getElementById("chipSelector");
+        if (!selector) return;
+        const currentVal = selector.value;
+        // Filter data based on selected company BEFORE getting unique chips
+        const relevantData = selectedCompany
+          ? data.filter((row) => row["Cong ty Nhap khau"] === selectedCompany)
+          : data;
+        const chipNames = [
+          ...new Set(relevantData.map((row) => row["CHIP"]).filter(Boolean)),
+        ].sort();
+        selector.innerHTML = '<option value="">-- Tất cả Chip --</option>';
+        chipNames.forEach((name) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          selector.appendChild(option);
+        });
+        const newSelector = selector.cloneNode(true);
+        selector.parentNode.replaceChild(newSelector, selector);
+        newSelector.value = chipNames.includes(currentVal) ? currentVal : ""; // Retain selection if possible
+        newSelector.addEventListener("change", filterAndDisplayImports); // Only filter table on chip change
+      }
+      // *** (FIX LỖI HISTORY) Hàm filterAndDisplayImports ***
+      function filterAndDisplayImports() {
+        const companySelector = document.getElementById("companySelector");
+        const chipSelector = document.getElementById("chipSelector");
+        const selectedCompany = companySelector ? companySelector.value : "";
+        const selectedChip = chipSelector ? chipSelector.value : "";
+
+        // Start with globally filtered data or full data
+        let dataToFilter = currentFilter
+          ? fullData.filter((row) => {
+              if (currentFilter.key === "Matching Status") {
+                const status =
+                  row["SKU MATCHING NKC"] &&
+                  row["SKU MATCHING NKC"] !== "Không matching"
+                    ? "Matching"
+                    : "Không matching";
+                return status === currentFilter.value;
+              }
+              const rowValue = row[currentFilter.key] ?? "Không xác định";
+              const filterValue = currentFilter.value ?? "Không xác định";
+              return String(rowValue) == String(filterValue);
+            })
+          : [...fullData];
+
+        // Apply company and chip filters sequentially
+        if (selectedCompany) {
+          dataToFilter = dataToFilter.filter(
+            (row) => row["Cong ty Nhap khau"] === selectedCompany
+          );
+        }
+        if (selectedChip) {
+          dataToFilter = dataToFilter.filter(
+            (row) => row["CHIP"] === selectedChip
+          );
+        }
+
+        populateImportsTable(dataToFilter); // Populate table body
+        addSummaryRowToHistoryTable(dataToFilter); // Add/Update summary row
+      }
+
+      // *** (MỚI - SỬA LỖI HISTORY) Hàm thêm dòng tổng cộng vào bảng History ***
+      function addSummaryRowToHistoryTable(data) {
+        const table = document.getElementById("companyImportsTable");
+        if (!table) return;
+
+        // Xóa tfoot cũ nếu có
+        let tfoot = table.querySelector("tfoot");
+        if (tfoot) tfoot.remove();
+
+        // Tính tổng số lượng và tổng giá trị
+        let totalQuantity = 0;
+        let totalValue = 0;
+        const qtyCol = "San luong hai quan (chiếc)";
+        const priceCol = "Unit hai quan (VND)";
+        data.forEach((row) => {
+          const qty = cleanNumeric(row[qtyCol]);
+          const price = cleanNumeric(row[priceCol]);
+          totalQuantity += qty;
+          totalValue += qty * price; // Tính tổng giá trị từng dòng
+        });
+
+        // Tạo tfoot và dòng mới
+        tfoot = table.createTFoot();
+        const row = tfoot.insertRow();
+
+        // Thêm các ô (cell)
+        const cellLabel = row.insertCell();
+        cellLabel.colSpan = 3; // Gộp 3 cột đầu: Ngày, Công ty, Tên Hàng
+        cellLabel.textContent = "Tổng cộng:";
+        cellLabel.style.textAlign = "right";
+
+        const cellQty = row.insertCell(); // Cột Số Lượng
+        cellQty.textContent = totalQuantity.toLocaleString("vi-VN");
+
+        const cellValue = row.insertCell(); // (MỚI) Cột Đơn Giá (hiển thị Tổng Giá Trị)
+        cellValue.textContent = totalValue.toLocaleString("vi-VN"); // Format tiền tệ
+
+        row.insertCell(); // Cột Thị Trường (để trống)
+      }
+
+      function populateImportsTable(data) {
+        /* ... giữ nguyên phần tbody ... */ const tB = document.querySelector(
+          "#companyImportsTable tbody"
+        );
+        if (!tB) return;
+        tB.innerHTML = "";
+        const f = document.createDocumentFragment();
+        data.forEach((r) => {
+          const tr = document.createElement("tr");
+          const d =
+            r["Ngay"] instanceof Date && !isNaN(r["Ngay"])
+              ? r["Ngay"].toLocaleDateString("vi-VN")
+              : r["Ngay"] || "";
+          tr.innerHTML = `<td>${d}</td><td>${
+            r["Cong ty Nhap khau"] || ""
+          }</td><td>${r["Ten hang"] || ""}</td><td>${cleanNumeric(
+            r["San luong hai quan (chiếc)"]
+          ).toLocaleString("vi-VN")}</td><td>${cleanNumeric(
+            r["Unit hai quan (VND)"]
+          ).toLocaleString("vi-VN", { maximumFractionDigits: 0 })}</td><td>${
+            r["Thi truong nhap khau"] || ""
+          }</td>`;
+          f.appendChild(tr);
+        });
+        tB.appendChild(f);
+      }
+      function filterTable(tableId, searchText, columnIndex = -1) {
+        /* ... giữ nguyên ... */ const t = searchText.toLowerCase().trim();
+        const tbl = document.getElementById(tableId);
+        if (!tbl) return;
+        const rows = tbl.querySelectorAll("tbody tr");
+        rows.forEach((r) => {
+          let cT = "";
+          if (columnIndex > -1 && r.cells[columnIndex]) {
+            cT = r.cells[columnIndex].textContent.toLowerCase();
+          } else {
+            cT = Array.from(r.cells)
+              .map((c) => c.textContent.toLowerCase())
+              .join(" ");
+          }
+          const iM = cT.includes(t);
+          r.style.display = iM ? "" : "none";
+        });
+      }
+    </script>
+  </body>
+</html>
