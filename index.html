@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mục Lục Báo Cáo Thống Kê Tháng 9</title>
+    <title>Mục Lục Báo Cáo Thống Kê Tháng 9 & 10</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,17 +16,30 @@
         font-family: "Inter", sans-serif;
         background-color: #f8fafc;
       }
+      /* Custom card styling for hover effect */
       .catalog-card {
         box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05),
           0 2px 4px -2px rgb(0 0 0 / 0.05);
         transition: all 0.3s ease-in-out;
+        display: flex; /* Ensure it stays flex even when filtered in/out */
       }
       .catalog-card:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-          0 8px 10px -6px rgb(0 0 0 / 0.1);
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+          0 4px 6px -4px rgb(0 0 0 / 0.1);
         border-color: #3b82f6;
       }
+      /* Hide element when filtered */
+      .hidden-by-filter {
+        display: none !important;
+      }
+      /* Style for the main content area to allow scrolling if too many items */
+      #catalog-list {
+        max-height: calc(100vh - 200px); /* Adjust based on header height */
+        overflow-y: auto;
+        padding-right: 1rem; /* Add some padding for the scrollbar */
+      }
+      
     </style>
   </head>
   <body
@@ -38,7 +51,7 @@
           class="inline-block bg-blue-600 text-white py-4 px-8 rounded-xl shadow-lg"
         >
           <h1 class="text-3xl font-extrabold tracking-tight">
-            Bảng Báo Cáo Thống Kê Tháng 9
+            Mục Lục Báo Cáo Thống Kê
           </h1>
         </div>
         <p class="mt-4 text-lg text-gray-500">
@@ -46,9 +59,28 @@
         </p>
       </header>
 
-      <main class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
-        <!-- === PHẦN HẢI QUAN === -->
-        <div class="mb-10">
+      <!-- === BỘ LỌC/TÌM KIẾM === -->
+      <div class="mb-8 p-4 bg-white rounded-xl shadow-lg border border-gray-100">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input
+            type="text"
+            id="search-input"
+            onkeyup="filterCatalog()"
+            placeholder="Lọc báo cáo (VD: Laptop, Hải Quan, T10...)"
+            class="w-full py-3 pl-10 pr-4 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out text-gray-700"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+      <!-- === KẾT THÚC BỘ LỌC === -->
+      
+      <main id="catalog-list" class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl space-y-10">
+        
+        <!-- ============================================== -->
+        <!-- ============ THÁNG 9 - HẢI QUAN ============= -->
+        <!-- ============================================== -->
+        <div data-section="Hải Quan Tháng 9">
           <h2
             class="text-xl font-bold text-blue-700 tracking-wider pb-2 border-b-2 border-blue-200"
           >
@@ -57,10 +89,11 @@
           <div
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
           >
-            <!-- Laptop -->
+            <!-- Báo cáo Laptop T9 (Hải Quan) -->
             <a
-              href="/bieu-dien-thong-ke/LAPTOP-T9.html"
+              href="/bieu-dien-thong-ke/T9/LAPTOP-T9.html"
               class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
+              data-keywords="Laptop Hải Quan T9 Hoạt động"
             >
               <div class="flex items-center">
                 <span
@@ -70,297 +103,67 @@
                 <div
                   class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
                 >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"
-                    />
-                  </svg>
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"/></svg>
                 </div>
                 <span
                   class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
                   >Báo Cáo Laptop</span
                 >
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <!-- Các báo cáo khác -->
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <!-- Các báo cáo khác (Bảo trì) -->
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="CPU Hải Quan T9 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 16.5v-1.5m3.75-12h1.5m-18 0h1.5m15 3.75h1.5m-18 0h1.5M12 4.5v15m-3.75-15h7.5"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 16.5v-1.5m3.75-12h1.5m-18 0h1.5m15 3.75h1.5m-18 0h1.5M12 4.5v15m-3.75-15h7.5"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo CPU</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo CPU</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="DRAM Hải Quan T9 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 16.5v-1.5m3.75-12h1.5m-18 0h1.5m15 3.75h1.5m-18 0h1.5M12 4.5v15m-3.75-15h7.5"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo DRAM</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo DRAM</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="SSD Hải Quan T9 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo SSD</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo SSD</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="Printer Hải Quan T9 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo GPU</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo Printer</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
-            </a>
-
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
-              <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"
-                    />
-                  </svg>
-                </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo Printer</span
-                >
-              </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
           </div>
         </div>
-
-        <!-- === PHẦN NGUYÊN KIM === -->
-        <div>
+        
+        <!-- ============================================== -->
+        <!-- ============ THÁNG 9 - NGUYÊN KIM ============ -->
+        <!-- ============================================== -->
+        <div data-section="Nguyên Kim Tháng 9">
           <h2
             class="text-xl font-bold text-blue-700 tracking-wider pb-2 border-b-2 border-blue-200"
           >
@@ -369,10 +172,11 @@
           <div
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
           >
-            <!-- Laptop -->
+            <!-- Báo cáo Laptop T9 (Nguyên Kim) -->
             <a
               href="/bieu-dien-nk/T9/LAPTOP-NK-T9.html"
               class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
+              data-keywords="Laptop Nguyên Kim T9 Hoạt động"
             >
               <div class="flex items-center">
                 <span
@@ -382,300 +186,273 @@
                 <div
                   class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
                 >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"
-                    />
-                  </svg>
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"/></svg>
                 </div>
                 <span
                   class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
                   >Báo Cáo Laptop</span
                 >
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <!-- Các báo cáo khác -->
+            <!-- Các báo cáo khác (Bảo trì) -->
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="CPU Nguyên Kim T9 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.032 60.032 0 0115.75 0M5.25 7.5A2.25 2.25 0 017.5 5.25h9A2.25 2.25 0 0118.75 7.5v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 015.25 16.5v-9zM10.5 6a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo CPU</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="DRAM Nguyên Kim T9 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25m0 0l-1.5 1.5m1.5-1.5l1.5 1.5M8.25 16.5L9.75 15l-1.5-1.5M15 12h5.25A2.25 2.25 0 0022.5 9.75V4.5A2.25 2.25 0 0020.25 2.25h-9A2.25 2.25 0 009 4.5v5.25M9 12h4.5M9 16.5h4.5M9 21h4.5"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo DRAM</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="SSD Nguyên Kim T9 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.5M5.25 7.5l.625 10.5m-1.25-10.5h17.25c.414 0 .75.336.75.75s-.336.75-.75.75H4.5c-.414 0-.75-.336-.75-.75s.336-.75.75-.75z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5v11.25m0-11.25c-2.485 0-4.5 2.015-4.5 4.5s2.015 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.015-4.5-4.5-4.5z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo SSD</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="Printer Nguyên Kim T9 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600">Báo Cáo Printer</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ============ THÁNG 10 - HẢI QUAN ============ -->
+        <!-- ============================================== -->
+        <div data-section="Hải Quan Tháng 10">
+          <h2
+            class="text-xl font-bold text-teal-700 tracking-wider pb-2 border-b-2 border-teal-200"
+          >
+            DANH MỤC HẢI QUAN (THÁNG 10)
+          </h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+          >
+            <!-- Báo cáo Laptop T10 (Hải Quan) -->
             <a
-              href="/bao-tri.html"
+              href="/bieu-dien-thong-ke/T10/LAPTOP-T10.html"
               class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
+              data-keywords="Laptop Hải Quan T10 Hoạt động"
             >
               <div class="flex items-center">
                 <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
+                  class="absolute top-2 right-2 bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                  >Hoạt động</span
                 >
                 <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
+                  class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors"
                 >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M2.25 18.75a60.032 60.032 0 0115.75 0M5.25 7.5A2.25 2.25 0 017.5 5.25h9A2.25 2.25 0 0118.75 7.5v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 015.25 16.5v-9zM10.5 6a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                    />
-                  </svg>
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"/></svg>
                 </div>
                 <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo CPU</span
+                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600"
+                  >Báo Cáo Laptop</span
                 >
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
+            <!-- Các báo cáo khác (Bảo trì) -->
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="CPU Hải Quan T10 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 16.5v-1.5m3.75-12h1.5m-18 0h1.5m15 3.75h1.5m-18 0h1.5M12 4.5v15m-3.75-15h7.5"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo CPU</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="DRAM Hải Quan T10 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo DRAM</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="SSD Hải Quan T10 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 10.5v-.75a3.75 3.75 0 117.5 0v.75m-7.5 0v4.5m7.5-4.5v4.5m-7.5 0h7.5m-7.5 0a3.75 3.75 0 01-3.75-3.75V8.25a3.75 3.75 0 013.75-3.75h7.5a3.75 3.75 0 013.75 3.75v8.25a3.75 3.75 0 01-3.75 3.75h-7.5a3.75 3.75 0 01-3.75-3.75z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo SSD</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="Printer Hải Quan T10 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo Printer</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- ============ THÁNG 10 - NGUYÊN KIM =========== -->
+        <!-- ============================================== -->
+        <div data-section="Nguyên Kim Tháng 10">
+          <h2
+            class="text-xl font-bold text-teal-700 tracking-wider pb-2 border-b-2 border-teal-200"
+          >
+            DANH MỤC NGUYÊN KIM (THÁNG 10) ⛏️
+          </h2>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
+          >
+            <!-- Báo cáo Laptop T10 (Nguyên Kim) -->
             <a
-              href="/bao-tri.html"
+              href="/bieu-dien-nk/T10/LAPTOP-NK-T10.html"
               class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
+              data-keywords="Laptop Nguyên Kim T10 Hoạt động"
             >
               <div class="flex items-center">
                 <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
+                  class="absolute top-2 right-2 bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                  >Hoạt động</span
                 >
                 <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
+                  class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors"
                 >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25m0 0l-1.5 1.5m1.5-1.5l1.5 1.5M8.25 16.5L9.75 15l-1.5-1.5M15 12h5.25A2.25 2.25 0 0022.5 9.75V4.5A2.25 2.25 0 0020.25 2.25h-9A2.25 2.25 0 009 4.5v5.25M9 12h4.5M9 16.5h4.5M9 21h4.5"
-                    />
-                  </svg>
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-1.621-.871a3 3 0 01-.879-2.122v-1.007M15 15.75a3 3 0 00-3-3H9a3 3 0 00-3 3v.252a3 3 0 003 3h3a3 3 0 003-3v-.252z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 6.75h4.5v4.5h-4.5v-4.5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h12A2.25 2.25 0 0120.25 6v4.5A2.25 2.25 0 0118 12.75H6A2.25 2.25 0 013.75 10.5v-4.5z"/></svg>
                 </div>
                 <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo DRAM</span
+                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600"
+                  >Báo Cáo Laptop</span
                 >
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <!-- Các báo cáo khác (Bảo trì) -->
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="CPU Nguyên Kim T10 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M20.25 7.5l-.625 10.5M5.25 7.5l.625 10.5m-1.25-10.5h17.25c.414 0 .75.336.75.75s-.336.75-.75.75H4.5c-.414 0-.75-.336-.75-.75s.336-.75.75-.75z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M12 7.5v11.25m0-11.25c-2.485 0-4.5 2.015-4.5 4.5s2.015 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.015-4.5-4.5-4.5z"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.032 60.032 0 0115.75 0M5.25 7.5A2.25 2.25 0 017.5 5.25h9A2.25 2.25 0 0118.75 7.5v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 015.25 16.5v-9zM10.5 6a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5zm-3 3a.75.75 0 100-1.5.75.75 0 000 1.5zm3 0a.75.75 0 100-1.5.75.75 0 000 1.5z"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo SSD</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo CPU</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="DRAM Nguyên Kim T10 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3.75 4.5h16.5m-16.5 15h16.5m-16.5-12h16.5m-16.5 7.5h16.5m-16.5-3.75h16.5"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25m0 0l-1.5 1.5m1.5-1.5l1.5 1.5M8.25 16.5L9.75 15l-1.5-1.5M15 12h5.25A2.25 2.25 0 0022.5 9.75V4.5A2.25 2.25 0 0020.25 2.25h-9A2.25 2.25 0 009 4.5v5.25M9 12h4.5M9 16.5h4.5M9 21h4.5"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo GPU</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo DRAM</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
 
-            <a
-              href="/bao-tri.html"
-              class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group"
-            >
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="SSD Nguyên Kim T10 Bảo trì">
               <div class="flex items-center">
-                <span
-                  class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"
-                  >Bảo trì</span
-                >
-                <div
-                  class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors"
-                >
-                  <svg
-                    class="h-6 w-6 text-blue-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"
-                    />
-                  </svg>
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.5M5.25 7.5l.625 10.5m-1.25-10.5h17.25c.414 0 .75.336.75.75s-.336.75-.75.75H4.5c-.414 0-.75-.336-.75-.75s.336-.75.75-.75z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5v11.25m0-11.25c-2.485 0-4.5 2.015-4.5 4.5s2.015 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.015-4.5-4.5-4.5z"/></svg>
                 </div>
-                <span
-                  class="ml-4 text-base font-semibold text-gray-700 group-hover:text-blue-600"
-                  >Báo Cáo Printer</span
-                >
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo SSD</span>
               </div>
-              <svg
-                class="h-5 w-5 text-gray-400 group-hover:text-blue-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="2.5"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+            </a>
+
+            <a href="/bao-tri.html" class="catalog-card relative flex items-center justify-between p-5 bg-white border border-gray-200 rounded-lg group" data-keywords="Printer Nguyên Kim T10 Bảo trì">
+              <div class="flex items-center">
+                <span class="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Bảo trì</span>
+                <div class="p-3 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                  <svg class="h-6 w-6 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.061A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.279A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z"/></svg>
+                </div>
+                <span class="ml-4 text-base font-semibold text-gray-700 group-hover:text-teal-600">Báo Cáo Printer</span>
+              </div>
+              <svg class="h-5 w-5 text-gray-400 group-hover:text-teal-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
             </a>
           </div>
         </div>
       </main>
     </div>
+
+    <!-- JavaScript for Filter Functionality -->
+    <script>
+      function filterCatalog() {
+        // Lấy giá trị tìm kiếm và chuyển sang chữ thường
+        const input = document.getElementById('search-input');
+        const filter = input.value.toUpperCase().trim();
+        
+        // Lấy tất cả các thẻ báo cáo
+        const cards = document.querySelectorAll('.catalog-card');
+        
+        // Lặp qua tất cả các thẻ báo cáo
+        cards.forEach(card => {
+          // Lấy nội dung cần so sánh: nội dung hiển thị + keywords
+          const content = card.textContent + (card.getAttribute('data-keywords') || "");
+          
+          if (content.toUpperCase().indexOf(filter) > -1) {
+            // Hiển thị thẻ
+            card.classList.remove('hidden-by-filter');
+            // Đảm bảo thẻ hiển thị dạng grid/flex để không bị lỗi layout
+            card.style.display = 'flex'; 
+          } else {
+            // Ẩn thẻ
+            card.classList.add('hidden-by-filter');
+          }
+        });
+
+        // Ẩn/hiện tiêu đề section nếu tất cả các card bên trong bị ẩn
+        const sections = document.querySelectorAll('main > div');
+        sections.forEach(section => {
+          const visibleCards = section.querySelectorAll('.catalog-card:not(.hidden-by-filter)');
+          if (visibleCards.length === 0 && filter !== "") {
+            // Ẩn toàn bộ section nếu không có card nào khớp và có filter
+            section.style.display = 'none';
+          } else {
+            // Hiển thị lại section
+            section.style.display = 'block';
+          }
+        });
+      }
+
+      // Khởi tạo filter khi tải trang (đảm bảo không có thẻ nào bị ẩn nếu input rỗng)
+      window.onload = filterCatalog; 
+    </script>
   </body>
 </html>
