@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tách Sheet Excel thành File Riêng</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <h2>Tách Sheet Excel thành các file riêng</h2>
+    <input type="file" id="upload" accept=".xlsx,.xls" />
+    <br><br>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('upload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const container = document.getElementById('output');
+                container.innerHTML = '';
+
+                workbook.SheetNames.forEach(sheetName => {
+                    const btn = document.createElement('button');
+                    btn.textContent = `Tải sheet: ${sheetName}`;
+                    btn.onclick = function () {
+                        const ws = workbook.Sheets[sheetName];
+                        const newWB = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(newWB, ws, sheetName);
+
+                        // Cho phép người dùng đặt tên file
+                        const fileName = prompt(`Nhập tên file cho sheet "${sheetName}"`, `${sheetName}.xlsx`);
+                        XLSX.writeFile(newWB, fileName || `${sheetName}.xlsx`);
+                    };
+                    container.appendChild(btn);
+                    container.appendChild(document.createElement('br'));
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>
